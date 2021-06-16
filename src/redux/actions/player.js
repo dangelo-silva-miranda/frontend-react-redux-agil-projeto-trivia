@@ -1,7 +1,11 @@
-function action() {
-  return {
-    type: 'EXEMPLO',
-  };
-}
+export const SAVE_NAME_EMAIL_PLAYER = 'SAVE_NAME_EMAIL_PLAYER';
 
-export default action;
+const saveNameEmailPlayerAction = (name, email) => ({
+  type: SAVE_NAME_EMAIL_PLAYER,
+  payload: {
+    name,
+    email,
+  },
+});
+
+export default saveNameEmailPlayerAction;

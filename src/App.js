@@ -2,7 +2,8 @@ import React from 'react';
 import { Route, Switch } from 'react-router';
 // import logo from './trivia.png';
 import './App.css';
-import Login from './pages/Login';
+import Header from './components/Header';
+// import Login from './pages/Login';
 
 export default function App() {
   return (
@@ -12,7 +13,7 @@ export default function App() {
           <img src={ logo } className="App-logo" alt="logo" />
         </header>
       </div> */}
-      <Route exact path="/" component={ Login } />
+      <Route exact path="/" component={ Header } />
     </Switch>
   );
 }
