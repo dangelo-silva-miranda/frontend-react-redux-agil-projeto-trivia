@@ -1,16 +1,41 @@
-// import React, { Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-// //redux
-// // imgGravatar = www.gravatar.com/avatar/okasokokasosoak
-// // name
-// export default class Header extends Component {
-//   render() {
-//     return (
-//       <div>
-//         <img src={imgGravatar} alt="avatar" data-testid="header-profile-picture" />
-//         <p data-testid="header-player-name">{name}</p>
-//         <p data-testid="header-score">0</p>
-//       </div>
-//     );
-//   }
-// }
+class Header extends Component {
+  render() {
+    const { name, score, picture } = this.props;
+
+    return (
+      <div>
+        <img src={ picture } alt="avatar" data-testid="header-profile-picture" />
+        <p data-testid="header-player-name">{ name }</p>
+        <p data-testid="header-score">{ score }</p>
+      </div>
+    );
+  }
+}
+
+const mapStateToProps = ({ player: { name, score, picture } }) => ({
+  name,
+  score,
+  picture,
+});
+
+Header.propTypes = {
+  name: PropTypes.string.isRequired,
+  score: PropTypes.number,
+  picture: PropTypes.string.isRequired,
+};
+
+// Specifies the default values for props:
+// https://pt-br.reactjs.org/docs/typechecking-with-proptypes.html#default-prop-values
+Header.defaultProps = {
+  score: 0,
+};
+
+/* const mapDispatchToProps = {
+
+}; */
+
+export default connect(mapStateToProps/* , mapDispatchToProps */)(Header);

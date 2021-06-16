@@ -1,10 +1,12 @@
 import {
+  SAVE_NAME_EMAIL_PLAYER,
   REQUEST_TOKEN,
   REQUEST_TOKEN_SUCCESS,
   REQUEST_TOKEN_ERROR,
 } from '../actions/player';
 
-import { saveLocalStorage } from '../../functions';
+import { saveLocalStorage, toHash } from '../../functions';
+import { GRAVATAR_API } from '../../services/api';
 
 const initialState = {
   name: '',
@@ -18,6 +20,19 @@ const initialState = {
 
 export default (state = initialState, { type, payload }) => {
   switch (type) {
+  case SAVE_NAME_EMAIL_PLAYER: {
+    const { name, email } = payload;
+    const hash = toHash(email);
+    const picture = `${GRAVATAR_API}${hash}`;
+
+    return {
+      ...state,
+      name,
+      gravatarEmail: email,
+      picture,
+    };
+  }
+
   case REQUEST_TOKEN: { const { isFetching } = payload;
     return {
       ...state,
