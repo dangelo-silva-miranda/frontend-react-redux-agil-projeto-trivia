@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
-import { fetchToken } from '../redux/actions/player';
+import { fetchToken, saveNameEmailPlayer } from '../redux/actions/player';
 
 class Login extends React.Component {
   constructor(props) {
@@ -17,6 +17,7 @@ class Login extends React.Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.verifyCompletedForm = this.verifyCompletedForm.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   handleChange({ target: { name, value } }) {
@@ -41,9 +42,14 @@ class Login extends React.Component {
     }
   }
 
+  handleClick(name, email) {
+    const { getToken, saveNameEmail } = this.props;
+    getToken();
+    saveNameEmail(name, email);
+  }
+
   render() {
     const { name, email, disabledButton } = this.state;
-    const { getToken } = this.props;
 
     return (
       <form>
@@ -72,7 +78,7 @@ class Login extends React.Component {
             type="button"
             data-testid="btn-play"
             disabled={ disabledButton }
-            onClick={ () => getToken() }
+            onClick={ () => this.handleClick(name, email) }
           >
             Jogar
           </button>
@@ -82,12 +88,14 @@ class Login extends React.Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  getToken: () => dispatch(fetchToken()),
-});
-
 Login.propTypes = {
   getToken: PropTypes.func.isRequired,
+  saveNameEmail: PropTypes.func.isRequired,
 };
+
+const mapDispatchToProps = (dispatch) => ({
+  getToken: () => dispatch(fetchToken()),
+  saveNameEmail: (name, email) => dispatch(saveNameEmailPlayer(name, email)),
+});
 
 export default connect(null, mapDispatchToProps)(Login);
