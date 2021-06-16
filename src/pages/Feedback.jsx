@@ -13,7 +13,8 @@ export default class Feedback extends Component {
 
   msgFeedback() {
     // const { assertions } = this.props;
-    if(assertions < 3) {
+    const param = 3;
+    if (assertions < param) {
       return (
         <p data-testid="feedback-text">Podia ser melhor...</p>
       );
@@ -22,12 +23,13 @@ export default class Feedback extends Component {
       <p data-testid="feedback-text">Mandou bem!</p>
     );
   }
+
   render() {
     return (
       <div>
         <Header />
         {this.msgFeedback()}
       </div>
-    )
+    );
   }
 }
