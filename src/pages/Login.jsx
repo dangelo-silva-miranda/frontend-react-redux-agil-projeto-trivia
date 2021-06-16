@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
+import { Link } from 'react-router-dom';
 import { fetchToken } from '../redux/actions/player';
 
 class Login extends React.Component {
@@ -66,14 +67,16 @@ class Login extends React.Component {
             onChange={ this.handleChange }
           />
         </label>
-        <button
-          type="button"
-          data-testid="btn-play"
-          disabled={ disabledButton }
-          onClick={ () => getToken() }
-        >
-          Jogar
-        </button>
+        <Link to="/game">
+          <button
+            type="button"
+            data-testid="btn-play"
+            disabled={ disabledButton }
+            onClick={ () => getToken() }
+          >
+            Jogar
+          </button>
+        </Link>
       </form>
     );
   }
