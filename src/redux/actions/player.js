@@ -1,4 +1,14 @@
-import fetchAPI from '../../services/api';
+import { fetchAPI, TOKEN_API } from '../../services/api';
+
+export const SAVE_NAME_EMAIL_PLAYER = 'SAVE_NAME_EMAIL_PLAYER';
+
+export const saveNameEmailPlayer = (name, email) => ({
+  type: SAVE_NAME_EMAIL_PLAYER,
+  payload: {
+    name,
+    email,
+  },
+});
 
 export const REQUEST_TOKEN = 'REQUEST_TOKEN';
 export const REQUEST_TOKEN_SUCCESS = 'REQUEST_TOKEN_SUCCESS';
@@ -26,8 +36,6 @@ export const requestTokenError = (error) => ({
     isFetching: false,
   },
 });
-
-const TOKEN_API = 'https://opentdb.com/api_token.php?command=request';
 
 // Thunk com Async / Await
 export const fetchToken = () => async (dispatch) => {
