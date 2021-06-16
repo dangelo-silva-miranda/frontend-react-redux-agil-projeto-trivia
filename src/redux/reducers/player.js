@@ -4,6 +4,8 @@ import {
   REQUEST_TOKEN_ERROR,
 } from '../actions/player';
 
+import { saveLocalStorage } from '../../functions';
+
 const initialState = {
   name: '',
   assertions: 0,
@@ -23,7 +25,10 @@ export default (state = initialState, { type, payload }) => {
     };
   }
 
-  case REQUEST_TOKEN_SUCCESS: { const { isFetching, token } = payload;
+  case REQUEST_TOKEN_SUCCESS: {
+    const { isFetching, token } = payload;
+    const key = 'token';
+    saveLocalStorage(key, token);
     return {
       ...state,
       token,
