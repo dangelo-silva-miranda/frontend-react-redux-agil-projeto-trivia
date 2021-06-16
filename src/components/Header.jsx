@@ -3,10 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 class Header extends Component {
-  // constructor(props) {
-  //   super(props);
-  // }
-
   render() {
     const { name, score, picture } = this.props;
 

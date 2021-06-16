@@ -1,7 +1,12 @@
-import toHash from '../../functions/index';
-import { SAVE_NAME_EMAIL_PLAYER } from '../actions/player';
+import {
+  SAVE_NAME_EMAIL_PLAYER,
+  REQUEST_TOKEN,
+  REQUEST_TOKEN_SUCCESS,
+  REQUEST_TOKEN_ERROR,
+} from '../actions/player';
 
-const GRAVATAR_API = 'https://www.gravatar.com/avatar/';
+import { saveLocalStorage, toHash } from '../../functions';
+import { GRAVATAR_API } from '../../services/api';
 
 const initialState = {
   name: '',
@@ -10,6 +15,7 @@ const initialState = {
   gravatarEmail: '',
   picture: '',
   token: '',
+  isFetching: false,
 };
 
 export default (state = initialState, { type, payload }) => {
@@ -24,6 +30,32 @@ export default (state = initialState, { type, payload }) => {
       name,
       gravatarEmail: email,
       picture,
+    };
+  }
+
+  case REQUEST_TOKEN: { const { isFetching } = payload;
+    return {
+      ...state,
+      isFetching,
+    };
+  }
+
+  case REQUEST_TOKEN_SUCCESS: {
+    const { isFetching, token } = payload;
+    const key = 'token';
+    saveLocalStorage(key, token);
+    return {
+      ...state,
+      token,
+      isFetching,
+    };
+  }
+
+  case REQUEST_TOKEN_ERROR: { const { isFetching, error } = payload;
+    return {
+      ...state,
+      error,
+      isFetching,
     };
   }
 
