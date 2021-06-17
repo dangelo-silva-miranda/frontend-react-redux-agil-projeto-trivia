@@ -43,7 +43,7 @@ export const fetchToken = () => async (dispatch) => {
 
   try {
     const results = await fetchAPI(TOKEN_API);
-    dispatch(requestTokenSuccess(results));
+    dispatch(requestTokenSuccess(results.token));
   } catch (error) {
     dispatch(requestTokenError(error));
   }

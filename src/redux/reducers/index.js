@@ -1,20 +1,10 @@
 import { combineReducers } from 'redux';
 import player from './player';
+import game from './game';
 
-const rootReducer = combineReducers({ player });
+const rootReducer = combineReducers({
+  player,
+  game,
+});
 
 export default rootReducer;
-
-// store = {
-//   player: {
-//     name: '',
-//     assertions: 0,
-//     score: 0,
-//     gravatarEmail: '',
-//     picture: '',
-//     token: '',
-//   },
-//   game: {
-//     questions: [],
-//   },
-// }
