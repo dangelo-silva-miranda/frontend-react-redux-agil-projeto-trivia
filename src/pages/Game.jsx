@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
+import Timer from '../components/Timer';
 
 class Game extends Component {
   constructor(props) {
@@ -48,6 +49,7 @@ class Game extends Component {
         <h5 data-testid="question-category">{category}</h5>
         <h5 data-testid="question-text">{question}</h5>
         {randomAnswers.map((buttons) => buttons)}
+        <Timer />
       </>
     );
   }
