@@ -4,11 +4,11 @@ export default class Config extends Component {
   render() {
     return (
       <div>
-        <title
+        <h1
           data-testid="settings-title"
         >
           Página de configurações
-        </title>
+        </h1>
       </div>
     );
   }

@@ -6,6 +6,7 @@ export default class Game extends Component {
     return (
       <div>
         <Header />
+        <p>Game</p>
       </div>
     );
   }

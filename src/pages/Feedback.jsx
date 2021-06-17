@@ -43,6 +43,7 @@ class Feedback extends React.Component {
   render() {
     return (
       <div>
+        <h1>Feedback</h1>
         {this.msgFeedback()}
         {this.createAvatar()}
       </div>
