@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
 
-// import { fetchQuestions } from '../redux/actions/game';
-
 class Game extends Component {
   constructor(props) {
     super(props);
@@ -14,12 +12,6 @@ class Game extends Component {
       // chosenAnswer: false,
     };
     this.renderQuestions = this.renderQuestions.bind(this);
-  }
-
-  componentDidMount() {
-    // const { getQuestions, token } = this.props;
-    // const questionsNumber = 5;
-    // getQuestions(token, questionsNumber);
   }
 
   renderQuestions() {
@@ -35,7 +27,8 @@ class Game extends Component {
     const button = (answer, index) => (
       <button
         type="button"
-        data-testid={ index ? `wrong-answer-${index}` : 'correct-answer' }
+        data-testid={ (index || index === 0) ? (
+          `wrong-answer-${index}`) : ('correct-answer') }
       >
         { answer }
       </button>
@@ -60,16 +53,6 @@ class Game extends Component {
   }
 
   render() {
-    // const haveQuestions = questions.length;
-    // if (haveQuestions > 0) {
-    //   return (
-    //     <div>
-    //       <Header />
-    //       <h5 data-testid="question-category">{questions[0].category}</h5>
-    //       <h5 data-testid="question-text">{questions[0].question}</h5>
-    //     </div>
-    //   );
-    // }
     return (
       this.renderQuestions()
     );
@@ -78,8 +61,6 @@ class Game extends Component {
 
 Game.propTypes = {
   questions: PropTypes.arrayOf(PropTypes.object).isRequired,
-  // token: PropTypes.string.isRequired,
-  // getQuestions: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ game: { questions }, player: { token } }) => ({
@@ -87,10 +68,4 @@ const mapStateToProps = ({ game: { questions }, player: { token } }) => ({
   token,
 });
 
-// const mapDispatchToProps = (dispatch) => ({
-//   getQuestions: (token, questionsNumber) => dispatch(
-//     fetchQuestions(token, questionsNumber),
-//   ),
-// });
-
-export default connect(mapStateToProps /* mapDispatchToProps */)(Game);
+export default connect(mapStateToProps)(Game);
