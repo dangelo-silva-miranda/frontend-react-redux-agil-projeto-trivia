@@ -62,10 +62,15 @@ export const fetchToken = () => async (dispatch) => {
 // };
 
 export const REQUEST_QUESTIONS = 'REQUEST_QUESTIONS';
+export const REQUEST_QUESTIONS_SUC = 'REQUEST_QUESTIONS_ERROR';
 export const REQUEST_QUESTIONS_ERROR = 'REQUEST_QUESTIONS_ERROR';
 
-export const requestQuestions = (questions) => ({
+export const requestQuestions = () => ({
   type: REQUEST_QUESTIONS,
+});
+
+export const requestQuestionsSuc = (questions) => ({
+  type: REQUEST_QUESTIONS_SUC,
   payload: {
     questions,
   },
@@ -78,13 +83,24 @@ export const requestQuestionsError = (error) => ({
   },
 });
 
+// export const fetchQuestions = (token, questionsNumber) => async (dispatch) => {
+//   const endpoint = `${QUESTIONS_API}?amount=${questionsNumber}&token=${token}`;
+
+//   try {
+//     const data = await fetchAPI(endpoint);
+//     dispatch(requestQuestions(data.results));
+//   } catch (error) {
+//     dispatch(requestQuestionsError(error));
+//   }
+// };
+
 export const fetchQuestions = (token, questionsNumber) => async (dispatch) => {
   const endpoint = `${QUESTIONS_API}?amount=${questionsNumber}&token=${token}`;
   dispatch(requestQuestions());
 
   try {
     const data = await fetchAPI(endpoint);
-    dispatch(requestQuestions(data.results));
+    dispatch(requestQuestionsSuc(data.results));
   } catch (error) {
     dispatch(requestQuestionsError(error));
   }

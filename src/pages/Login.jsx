@@ -46,7 +46,6 @@ class Login extends React.Component {
     const { getToken, saveNameEmail, getQuestions, token } = this.props;
     getToken();
     saveNameEmail(name, email);
-    console.log(token);
     getQuestions(token, 5);
   }
 
