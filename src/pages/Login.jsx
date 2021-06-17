@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
 import { Link } from 'react-router-dom';
+
 import { fetchToken, saveNameEmailPlayer } from '../redux/actions/player';
+import { fetchQuestions } from '../redux/actions/game';
 
 class Login extends React.Component {
   constructor(props) {
@@ -42,10 +43,13 @@ class Login extends React.Component {
     }
   }
 
-  handleClick(name, email) {
-    const { getToken, saveNameEmail } = this.props;
-    getToken();
+  async handleClick(name, email) {
+    const { getToken, saveNameEmail, token, getQuestions, history } = this.props;
+    await getToken();
     saveNameEmail(name, email);
+    const questionsNumber = 5;
+    await getQuestions(token, questionsNumber);
+    history.push('/game');
   }
 
   render() {
@@ -73,16 +77,14 @@ class Login extends React.Component {
             onChange={ this.handleChange }
           />
         </label>
-        <Link to="/game">
-          <button
-            type="button"
-            data-testid="btn-play"
-            disabled={ disabledButton }
-            onClick={ () => this.handleClick(name, email) }
-          >
-            Jogar
-          </button>
-        </Link>
+        <button
+          type="button"
+          data-testid="btn-play"
+          disabled={ disabledButton }
+          onClick={ () => this.handleClick(name, email) }
+        >
+          Jogar
+        </button>
         <Link to="/config">
           <button
             type="button"
@@ -97,13 +99,23 @@ class Login extends React.Component {
 }
 
 Login.propTypes = {
+  token: PropTypes.string.isRequired,
+  history: PropTypes.objectOf(Object).isRequired,
   getToken: PropTypes.func.isRequired,
+  getQuestions: PropTypes.func.isRequired,
   saveNameEmail: PropTypes.func.isRequired,
 };
 
+const mapStateToProps = ({ player: { token } }) => ({
+  token,
+});
+
 const mapDispatchToProps = (dispatch) => ({
   getToken: () => dispatch(fetchToken()),
+  getQuestions: (token, questionsNumber) => dispatch(
+    fetchQuestions(token, questionsNumber),
+  ),
   saveNameEmail: (name, email) => dispatch(saveNameEmailPlayer(name, email)),
 });
 
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
