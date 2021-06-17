@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
-import { fetchToken, saveNameEmailPlayer } from '../redux/actions/player';
+import { fetchToken, saveNameEmailPlayer, fetchQuestions } from '../redux/actions/player';
 
 class Login extends React.Component {
   constructor(props) {
@@ -43,9 +43,11 @@ class Login extends React.Component {
   }
 
   handleClick(name, email) {
-    const { getToken, saveNameEmail } = this.props;
+    const { getToken, saveNameEmail, getQuestions, token } = this.props;
     getToken();
     saveNameEmail(name, email);
+    console.log(token);
+    getQuestions(token, 5);
   }
 
   render() {
@@ -89,13 +91,20 @@ class Login extends React.Component {
 }
 
 Login.propTypes = {
+  token: PropTypes.string.isRequired,
   getToken: PropTypes.func.isRequired,
+  getQuestions: PropTypes.func.isRequired,
   saveNameEmail: PropTypes.func.isRequired,
 };
 
+const mapStateToProps = ({ player: { token } }) => ({
+  token,
+});
+
 const mapDispatchToProps = (dispatch) => ({
   getToken: () => dispatch(fetchToken()),
+  getQuestions: (token, questionsNumber) => dispatch(fetchQuestions(token, questionsNumber)),
   saveNameEmail: (name, email) => dispatch(saveNameEmailPlayer(name, email)),
 });
 
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
