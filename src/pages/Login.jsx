@@ -2,8 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { Link } from 'react-router-dom';
-import { fetchToken, saveNameEmailPlayer, fetchQuestions } from '../redux/actions/player';
+// import { Link } from 'react-router-dom';
+import { fetchToken, saveNameEmailPlayer } from '../redux/actions/player';
+import { fetchQuestions } from '../redux/actions/game';
 
 class Login extends React.Component {
   constructor(props) {
@@ -42,11 +43,13 @@ class Login extends React.Component {
     }
   }
 
-  handleClick(name, email) {
-    const { getToken, saveNameEmail, getQuestions, token } = this.props;
-    getToken();
+  async handleClick(name, email) {
+    const { getToken, saveNameEmail, token, getQuestions, history } = this.props;
+    await getToken();
     saveNameEmail(name, email);
-    getQuestions(token, 5);
+    const questionsNumber = 5;
+    await getQuestions(token, questionsNumber);
+    history.push('/game');
   }
 
   render() {
@@ -74,16 +77,17 @@ class Login extends React.Component {
             onChange={ this.handleChange }
           />
         </label>
-        <Link to="/game">
-          <button
-            type="button"
-            data-testid="btn-play"
-            disabled={ disabledButton }
-            onClick={ () => this.handleClick(name, email) }
-          >
-            Jogar
-          </button>
-        </Link>
+        {/* <Link to="/game"> */}
+        <button
+          type="button"
+          data-testid="btn-play"
+          disabled={ disabledButton }
+          onClick={ () => this.handleClick(name, email) }
+        >
+          Jogar
+        </button>
+
+        {/* </Link> */}
       </form>
     );
   }
@@ -91,6 +95,7 @@ class Login extends React.Component {
 
 Login.propTypes = {
   token: PropTypes.string.isRequired,
+  history: PropTypes.objectOf(Object).isRequired,
   getToken: PropTypes.func.isRequired,
   getQuestions: PropTypes.func.isRequired,
   saveNameEmail: PropTypes.func.isRequired,
@@ -102,7 +107,9 @@ const mapStateToProps = ({ player: { token } }) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getToken: () => dispatch(fetchToken()),
-  getQuestions: (token, questionsNumber) => dispatch(fetchQuestions(token, questionsNumber)),
+  getQuestions: (token, questionsNumber) => dispatch(
+    fetchQuestions(token, questionsNumber),
+  ),
   saveNameEmail: (name, email) => dispatch(saveNameEmailPlayer(name, email)),
 });
 

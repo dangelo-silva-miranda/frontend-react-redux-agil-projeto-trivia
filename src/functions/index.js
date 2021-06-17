@@ -7,3 +7,11 @@ export const toHash = (string) => (
 export const saveLocalStorage = (key, data) => (
   localStorage.setItem(key, JSON.stringify(data))
 );
+
+export const restoreFromLocalStorage = (key) => {
+  const localStorageKey = localStorage.getItem(key);
+  if (localStorageKey) {
+    return JSON.parse(localStorageKey);
+  }
+  return [];
+};
