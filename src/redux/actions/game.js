@@ -16,3 +16,9 @@ export const fetchQuestions = (token, questionsNumber) => async (dispatch) => {
   const data = await fetchAPI(endpoint);
   dispatch(requestQuestionsSuc(data.results));
 };
+
+export const UPDATE_TIME = 'TIME';
+
+export const updateTime = () => ({
+  type: UPDATE_TIME,
+});

@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 
-export default class Timer extends Component {
+import { updateTime } from '../redux/actions/game';
+
+class Timer extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      count: 30,
-    };
+    this.state = { };
     this.timerCounter = this.timerCounter.bind(this);
   }
 
@@ -15,24 +18,38 @@ export default class Timer extends Component {
   }
 
   componentDidUpdate() {
-    const { count } = this.state;
-    if (count === 0) clearInterval(this.time);
+    const { time } = this.props;
+    if (time === 0) clearInterval(this.time);
   }
 
   timerCounter() {
+    const { updateTime: setTime } = this.props;
     const ONE_SEC = 1000;
     this.time = setInterval(() => {
-      this.setState((prevState) => ({
-        count: prevState.count - 1,
-      }));
+      setTime();
     }, ONE_SEC);
   }
 
   render() {
-    const { count } = this.state;
+    const { time } = this.props;
 
     return (
-      <p>{ count }</p>
+      <p>{ time }</p>
     );
   }
 }
+
+Timer.propTypes = {
+  time: PropTypes.number.isRequired,
+  updateTime: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = ({ game: { time } }) => ({
+  time,
+});
+
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({ updateTime }, dispatch)
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Timer);

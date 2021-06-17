@@ -1,16 +1,18 @@
 import {
   REQUEST_QUESTIONS_SUC,
+  UPDATE_TIME,
 } from '../actions/game';
 
 import { saveLocalStorage, restoreFromLocalStorage } from '../../functions';
 
 export const keyQuestionsLS = 'questions';
 
-const initialState = {
+const INITIAL_STATE = {
   questions: restoreFromLocalStorage(keyQuestionsLS),
+  time: 30,
 };
 
-export default (state = initialState, { type, payload }) => {
+export default (state = INITIAL_STATE, { type, payload }) => {
   switch (type) {
   case REQUEST_QUESTIONS_SUC: {
     const { questions } = payload;
@@ -18,6 +20,14 @@ export default (state = initialState, { type, payload }) => {
     return {
       ...state,
       questions,
+    };
+  }
+
+  case UPDATE_TIME: {
+    const { time } = state;
+    return {
+      ...state,
+      time: time - 1,
     };
   }
 
