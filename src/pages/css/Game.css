@@ -4,9 +4,8 @@ button {
 
 .correctAnswer {
   border: 3px solid rgb(6, 240, 15);
-  background-color: transparent;
 }
 
 .incorrectAnswer {
-  border: 3px solid rgb(255, 0, 0);
+  border: 3px solid red;
 }
