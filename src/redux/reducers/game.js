@@ -1,6 +1,7 @@
 import {
   REQUEST_QUESTIONS_SUC,
   UPDATE_TIME,
+  // STOP_TIME,
 } from '../actions/game';
 
 import { saveLocalStorage, restoreFromLocalStorage } from '../../functions';
@@ -24,12 +25,19 @@ export default (state = INITIAL_STATE, { type, payload }) => {
   }
 
   case UPDATE_TIME: {
-    const { time } = state;
+    const { time } = payload;
     return {
       ...state,
-      time: time - 1,
+      time,
     };
   }
+
+  // case STOP_TIME: {
+
+  //   return {
+  //     ...state,
+  //   };
+  // }
 
   default:
     return state;

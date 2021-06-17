@@ -9,7 +9,9 @@ class Timer extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { };
+    this.state = {
+      count: 30,
+    };
     this.timerCounter = this.timerCounter.bind(this);
   }
 
@@ -18,29 +20,31 @@ class Timer extends Component {
   }
 
   componentDidUpdate() {
-    const { time } = this.props;
-    if (time === 0) clearInterval(this.time);
+    const { count } = this.state;
+    if (count === 0) clearInterval(this.time);
   }
 
   timerCounter() {
-    const { updateTime: setTime } = this.props;
     const ONE_SEC = 1000;
     this.time = setInterval(() => {
-      setTime();
+      this.setState((prevState) => ({
+        count: prevState.count - 1,
+      }));
     }, ONE_SEC);
   }
 
   render() {
-    const { time } = this.props;
-
+    const { count } = this.state;
+    const { updateTime: setTime } = this.props;
+    setTime(count);
     return (
-      <p>{ time }</p>
+      <p>{ count }</p>
     );
   }
 }
 
 Timer.propTypes = {
-  time: PropTypes.number.isRequired,
+  // time: PropTypes.number.isRequired,
   updateTime: PropTypes.func.isRequired,
 };
 
