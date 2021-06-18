@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-export default class Timer extends Component {
+import { updateTime } from '../redux/actions/game';
+
+class Timer extends Component {
   constructor(props) {
     super(props);
 
@@ -51,12 +55,21 @@ export default class Timer extends Component {
 
   render() {
     const { count } = this.state;
+    const { updateTime: getTime } = this.props;
+    getTime(count);
     return (
       <p>{ count }</p>
     );
   }
 }
 
-// Timer.propTypes = {
-//   disableBtns: PropTypes.func.isRequired,
-// };
+Timer.propTypes = {
+  // disableBtns: PropTypes.func.isRequired,
+  updateTime: PropTypes.func.isRequired,
+};
+
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({ updateTime }, dispatch)
+);
+
+export default connect(null, mapDispatchToProps)(Timer);
