@@ -17,6 +17,7 @@ class Game extends Component {
       chosenAnswer: false,
       disabledButton: false,
       answerHasCorrect: false,
+      sendToScore: false,
     };
     this.renderQuestions = this.renderQuestions.bind(this);
     this.randomQuestions = this.randomQuestions.bind(this);
@@ -24,6 +25,7 @@ class Game extends Component {
     this.endTime = this.endTime.bind(this);
     this.checkAnswer = this.checkAnswer.bind(this);
     this.addPointsScore = this.addPointsScore.bind(this);
+    this.sendScore = this.sendScore.bind(this);
   }
 
   componentDidMount() {
@@ -31,12 +33,7 @@ class Game extends Component {
   }
 
   componentDidUpdate() {
-    const { time, addToScore } = this.props;
-    if (!time) {
-      console.log(time);
-      const score = this.addPointsScore();
-      addToScore(score);
-    }
+    this.sendScore();
   }
 
   endTime() {
@@ -48,6 +45,18 @@ class Game extends Component {
     }, finalTime);
   }
 
+  sendScore() {
+    const { addToScore } = this.props;
+    const { sendToScore } = this.state;
+    if (sendToScore) {
+      const syncTime = 1000;
+      setTimeout(() => {
+        const score = this.addPointsScore();
+        addToScore(score);
+      }, syncTime);
+    }
+  }
+
   addPointsScore() {
     const { questions, time } = this.props;
     const { indexQuestion, answerHasCorrect } = this.state;
@@ -55,6 +64,9 @@ class Game extends Component {
     const { difficulty } = questionSelected;
     const level = { easy: 1, medium: 2, hard: 3 };
     const INITIAL_VALUE = 10;
+    this.setState({
+      sendToScore: false,
+    });
 
     if (answerHasCorrect) {
       const { easy, medium, hard } = level;
@@ -81,6 +93,7 @@ class Game extends Component {
     if (answer === correctAnswer) {
       this.setState({
         answerHasCorrect: true,
+        sendToScore: true,
       });
     }
   }
