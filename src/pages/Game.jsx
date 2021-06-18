@@ -7,6 +7,7 @@ import { addScore } from '../redux/actions/player';
 import Header from '../components/Header';
 import Timer from '../components/Timer';
 import './css/Game.css';
+import { saveLocalStorage } from '../functions';
 
 class Game extends Component {
   constructor(props) {
@@ -46,12 +47,12 @@ class Game extends Component {
   }
 
   sendScore() {
-    const { addToScore } = this.props;
+    const { addToScore, score } = this.props;
     const { sendToScore } = this.state;
     if (sendToScore) {
       const syncTime = 1000;
       setTimeout(() => {
-        const score = this.addPointsScore();
+        const sumQuestion = this.addPointsScore();
         const currScore = score + sumQuestion;
         const newScore = {
           player: {
@@ -62,6 +63,9 @@ class Game extends Component {
         saveLocalStorage(key, newScore);
         addToScore(currScore);
       }, syncTime);
+      this.setState({
+        sendToScore: false,
+      });
     }
   }
 
@@ -72,9 +76,6 @@ class Game extends Component {
     const { difficulty } = questionSelected;
     const level = { easy: 1, medium: 2, hard: 3 };
     const INITIAL_VALUE = 10;
-    this.setState({
-      sendToScore: false,
-    });
 
     if (answerHasCorrect) {
       const { easy, medium, hard } = level;
@@ -179,14 +180,16 @@ class Game extends Component {
 Game.propTypes = {
   questions: PropTypes.arrayOf(PropTypes.object).isRequired,
   time: PropTypes.number.isRequired,
+  score: PropTypes.number.isRequired,
   stoppedTime: PropTypes.func.isRequired,
   addToScore: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ game: { questions, time }, player: { token } }) => ({
+const mapStateToProps = ({ game: { questions, time }, player: { token, score } }) => ({
   questions,
   token,
   time,
+  score,
 });
 
 const mapDispatchToProps = (dispatch) => ({

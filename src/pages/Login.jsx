@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 
 import { fetchToken, saveNameEmailPlayer } from '../redux/actions/player';
 import { fetchQuestions } from '../redux/actions/game';
+import { saveLocalStorage } from '../functions';
 
 class Login extends React.Component {
   constructor(props) {
