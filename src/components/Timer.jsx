@@ -51,7 +51,6 @@ export default class Timer extends Component {
 
   render() {
     const { count } = this.state;
-
     return (
       <p>{ count }</p>
     );

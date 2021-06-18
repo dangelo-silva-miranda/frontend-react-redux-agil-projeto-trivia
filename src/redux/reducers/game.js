@@ -41,6 +41,13 @@ export default (state = INITIAL_STATE, { type, payload }) => {
     };
   }
 
+  // case STOP_TIME: {
+
+  //   return {
+  //     ...state,
+  //   };
+  // }
+
   default:
     return state;
   }
