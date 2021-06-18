@@ -11,7 +11,7 @@ export const keyQuestionsLS = 'questions';
 const INITIAL_STATE = {
   questions: restoreFromLocalStorage(keyQuestionsLS),
   // time: 30,
-  timeStopped: undefined,
+  timeStopped: null,
 };
 
 export default (state = INITIAL_STATE, { type, payload }) => {
