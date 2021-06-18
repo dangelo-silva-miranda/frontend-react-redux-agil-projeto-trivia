@@ -16,6 +16,7 @@ class Game extends Component {
       indexQuestion: 0,
       chosenAnswer: false,
       disabledButton: false,
+      answerHasCorrect: false,
     };
     this.renderQuestions = this.renderQuestions.bind(this);
     this.randomQuestions = this.randomQuestions.bind(this);
@@ -29,6 +30,15 @@ class Game extends Component {
     this.endTime();
   }
 
+  componentDidUpdate() {
+    const { time, addToScore } = this.props;
+    if (!time) {
+      console.log(time);
+      const score = this.addPointsScore();
+      addToScore(score);
+    }
+  }
+
   endTime() {
     const finalTime = 30000;
     setTimeout(() => {
@@ -40,37 +50,38 @@ class Game extends Component {
 
   addPointsScore() {
     const { questions, time } = this.props;
-    const { indexQuestion } = this.state;
+    const { indexQuestion, answerHasCorrect } = this.state;
     const questionSelected = questions[indexQuestion];
     const { difficulty } = questionSelected;
     const level = { easy: 1, medium: 2, hard: 3 };
     const INITIAL_VALUE = 10;
 
-    const { easy, medium, hard } = level;
-    switch (difficulty) {
-    case 'easy':
-      return (INITIAL_VALUE + (time * easy));
-
-    case 'medium':
-      return (INITIAL_VALUE + (time * medium));
-
-    case 'hard':
-      return (INITIAL_VALUE + (time * hard));
-
-    default:
-      return '';
+    if (answerHasCorrect) {
+      const { easy, medium, hard } = level;
+      switch (difficulty) {
+      case 'easy':
+        return (INITIAL_VALUE + (time * easy));
+      case 'medium':
+        return (INITIAL_VALUE + (time * medium));
+      case 'hard':
+        return (INITIAL_VALUE + (time * hard));
+      default:
+        return '';
+      }
     }
+    return 0;
   }
 
   checkAnswer({ target: { innerText } }) {
-    const { questions, addToScore } = this.props;
+    const { questions } = this.props;
     const { indexQuestion } = this.state;
     const questionSelected = questions[indexQuestion];
     const { correct_answer: correctAnswer } = questionSelected;
     const answer = innerText;
     if (answer === correctAnswer) {
-      const store = this.addPointsScore();
-      addToScore(store);
+      this.setState({
+        answerHasCorrect: true,
+      });
     }
   }
 
@@ -139,10 +150,7 @@ class Game extends Component {
 
   render() {
     return (
-      <>
-        <button type="button" onClick={ this.checkAnswer }>score</button>
-        {this.renderQuestions()}
-      </>
+      this.renderQuestions()
     );
   }
 }

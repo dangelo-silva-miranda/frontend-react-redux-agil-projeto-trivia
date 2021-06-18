@@ -10,7 +10,7 @@ const keyQuestionsLS = 'questions';
 
 const INITIAL_STATE = {
   questions: restoreFromLocalStorage(keyQuestionsLS),
-  time: null,
+  time: undefined,
   stopTime: false,
 };
 
