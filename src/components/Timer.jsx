@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
+// import PropTypes from 'prop-types';
 
-import { updateTime } from '../redux/actions/game';
-
-class Timer extends Component {
+export default class Timer extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { };
+    this.state = {
+      count: 30,
+      // readyToDesable: false,
+    };
     this.timerCounter = this.timerCounter.bind(this);
+    // this.stopTimer = this.stopTimer.bind(this);
   }
 
   componentDidMount() {
@@ -18,38 +18,46 @@ class Timer extends Component {
   }
 
   componentDidUpdate() {
-    const { time } = this.props;
-    if (time === 0) clearInterval(this.time);
+    const { count } = this.state;
+    // this.stopTimer(count);
+    if (count === 0) clearInterval(this.time);
   }
 
+  // stopTimer(count) {
+  //   const { disableBtns } = this.props;
+  //   const { readyToDesable } = this.state;
+  //   if (count === 0) {
+  //     clearInterval(this.time);
+  //     this.setState({
+  //       readyToDesable: true,
+  //     });
+  //   }
+  //   if (readyToDesable) {
+  //     disableBtns();
+  //     this.setState({
+  //       readyToDesable: false,
+  //     });
+  //   }
+  // }
+
   timerCounter() {
-    const { updateTime: setTime } = this.props;
     const ONE_SEC = 1000;
     this.time = setInterval(() => {
-      setTime();
+      this.setState((prevState) => ({
+        count: prevState.count - 1,
+      }));
     }, ONE_SEC);
   }
 
   render() {
-    const { time } = this.props;
+    const { count } = this.state;
 
     return (
-      <p>{ time }</p>
+      <p>{ count }</p>
     );
   }
 }
 
-Timer.propTypes = {
-  time: PropTypes.number.isRequired,
-  updateTime: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = ({ game: { time } }) => ({
-  time,
-});
-
-const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({ updateTime }, dispatch)
-);
-
-export default connect(mapStateToProps, mapDispatchToProps)(Timer);
+// Timer.propTypes = {
+//   disableBtns: PropTypes.func.isRequired,
+// };

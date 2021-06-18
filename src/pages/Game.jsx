@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+
+import { stopTime } from '../redux/actions/game';
 import Header from '../components/Header';
 import Timer from '../components/Timer';
 import './css/Game.css';
@@ -12,9 +14,31 @@ class Game extends Component {
     this.state = {
       indexQuestion: 0,
       chosenAnswer: false,
+      disabledButton: false,
     };
     this.renderQuestions = this.renderQuestions.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.endTime = this.endTime.bind(this);
+    // this.handleDisableButtons = this.handleDisableButtons.bind(this);
+  }
+
+  // handleDisableButtons() {
+  //   this.setState({
+  //     disabledButton: true,
+  //   });
+  // }
+
+  componentDidMount() {
+    this.endTime();
+  }
+
+  endTime() {
+    const finalTime = 30000;
+    setTimeout(() => {
+      this.setState({
+        disabledButton: true,
+      });
+    }, finalTime);
   }
 
   handleClick() {
@@ -25,11 +49,10 @@ class Game extends Component {
 
   renderQuestions() {
     const { questions } = this.props;
-    const { indexQuestion, chosenAnswer } = this.state;
+    const { indexQuestion, chosenAnswer, disabledButton } = this.state;
     const questionSelected = questions[indexQuestion];
     const {
-      category,
-      question,
+      category, question,
       correct_answer: correctAnswer,
       incorrect_answers: incorrectAswers } = questionSelected;
 
@@ -46,6 +69,7 @@ class Game extends Component {
     const button = (answer, index) => (
       <button
         type="button"
+        disabled={ disabledButton }
         onClick={ this.handleClick }
         className={ classButtons(index, chosenAnswer) }
         data-testid={ (index || index === 0) ? (
@@ -69,7 +93,7 @@ class Game extends Component {
         <h5 data-testid="question-category">{category}</h5>
         <h5 data-testid="question-text">{question}</h5>
         {randomAnswers.map((buttons) => buttons)}
-        <Timer />
+        <Timer disableBtns={ this.handleDisableButtons } />
       </>
     );
   }
@@ -82,12 +106,19 @@ class Game extends Component {
 }
 
 Game.propTypes = {
+  // time: PropTypes.number.isRequired,
   questions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  // getTime: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ game: { questions }, player: { token } }) => ({
+const mapStateToProps = ({ game: { questions /* time */ }, player: { token } }) => ({
+  // time,
   questions,
   token,
 });
 
-export default connect(mapStateToProps)(Game);
+const mapDispatchToProps = (dispatch) => ({
+  getTime: (time) => dispatch(stopTime(time)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Game);
