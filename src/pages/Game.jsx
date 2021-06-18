@@ -52,7 +52,15 @@ class Game extends Component {
       const syncTime = 1000;
       setTimeout(() => {
         const score = this.addPointsScore();
-        addToScore(score);
+        const currScore = score + sumQuestion;
+        const newScore = {
+          player: {
+            score: currScore,
+          },
+        };
+        const key = 'state';
+        saveLocalStorage(key, newScore);
+        addToScore(currScore);
       }, syncTime);
     }
   }

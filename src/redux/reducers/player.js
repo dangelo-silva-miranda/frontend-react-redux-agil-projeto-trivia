@@ -6,7 +6,7 @@ import {
   ADD_SCORE,
 } from '../actions/player';
 
-import { saveLocalStorage, toHash } from '../../functions';
+import { toHash } from '../../functions';
 import { GRAVATAR_API } from '../../services/api';
 
 const INITIAL_STATE = {
@@ -38,8 +38,6 @@ export default (state = INITIAL_STATE, { type, payload }) => {
     };
   }
   case REQUEST_TOKEN_SUCCESS: { const { isFetching, token } = payload;
-    const key = 'token';
-    saveLocalStorage(key, token);
     return {
       ...state,
       token,
@@ -53,10 +51,10 @@ export default (state = INITIAL_STATE, { type, payload }) => {
       isFetching,
     };
   }
-  case ADD_SCORE: { const { updateScore } = payload; const { score } = state;
+  case ADD_SCORE: { const { updateScore } = payload;
     return {
       ...state,
-      score: score + updateScore,
+      score: updateScore,
     };
   }
   default:
