@@ -19,6 +19,8 @@ class Game extends Component {
     this.renderQuestions = this.renderQuestions.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.endTime = this.endTime.bind(this);
+    this.buttonNext = this.buttonNext.bind(this);
+    this.nextQuestion = this.nextQuestion.bind(this);
     // this.handleDisableButtons = this.handleDisableButtons.bind(this);
   }
 
@@ -45,6 +47,26 @@ class Game extends Component {
     this.setState({
       chosenAnswer: true,
     });
+  }
+
+  nextQuestion() {
+    const { indexQuestion } = this.state;
+    this.setState({ indexQuestion: indexQuestion + 1 });
+  }
+
+  buttonNext() {
+    const { chosenAnswer } = this.state;
+    if (chosenAnswer) {
+      return (
+        <button
+          type="button"
+          data-testid="btn-next"
+          onClick={ this.nextQuestion }
+        >
+          Next
+        </button>
+      );
+    }
   }
 
   renderQuestions() {
@@ -102,6 +124,7 @@ class Game extends Component {
     return (
       <div>
         {this.renderQuestions()}
+        { this.buttonNext() }
       </div>
     );
   }
