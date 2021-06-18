@@ -17,16 +17,10 @@ class Game extends Component {
       disabledButton: false,
     };
     this.renderQuestions = this.renderQuestions.bind(this);
+    this.randomQuestions = this.randomQuestions.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.endTime = this.endTime.bind(this);
-    // this.handleDisableButtons = this.handleDisableButtons.bind(this);
   }
-
-  // handleDisableButtons() {
-  //   this.setState({
-  //     disabledButton: true,
-  //   });
-  // }
 
   componentDidMount() {
     this.endTime();
@@ -42,18 +36,24 @@ class Game extends Component {
   }
 
   handleClick() {
+    const { stoppedTime } = this.props;
     this.setState({
       chosenAnswer: true,
     });
+    stoppedTime();
+  }
+
+  randomQuestions(answers) {
+    const FACTOR_POSITION = 0.5;
+    const randomAnswers = [...answers].sort(() => FACTOR_POSITION - Math.random());
+    return randomAnswers;
   }
 
   renderQuestions() {
     const { questions } = this.props;
     const { indexQuestion, chosenAnswer, disabledButton } = this.state;
     const questionSelected = questions[indexQuestion];
-    const {
-      category, question,
-      correct_answer: correctAnswer,
+    const { question, category, correct_answer: correctAnswer,
       incorrect_answers: incorrectAswers } = questionSelected;
 
     const classButtons = (index, chosenAns) => {
@@ -85,15 +85,14 @@ class Game extends Component {
     ));
 
     const answers = [correct, ...incorrect];
-    const FACTOR_POSITION = 0.5;
-    const randomAnswers = [...answers].sort(() => FACTOR_POSITION - Math.random());
+    const randomAnswers = this.randomQuestions(answers);
     return (
       <>
         <Header />
         <h5 data-testid="question-category">{category}</h5>
         <h5 data-testid="question-text">{question}</h5>
         {randomAnswers.map((buttons) => buttons)}
-        <Timer disableBtns={ this.handleDisableButtons } />
+        <Timer />
       </>
     );
   }
@@ -106,19 +105,17 @@ class Game extends Component {
 }
 
 Game.propTypes = {
-  // time: PropTypes.number.isRequired,
   questions: PropTypes.arrayOf(PropTypes.object).isRequired,
-  // getTime: PropTypes.func.isRequired,
+  stoppedTime: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ game: { questions /* time */ }, player: { token } }) => ({
-  // time,
+const mapStateToProps = ({ game: { questions }, player: { token } }) => ({
   questions,
   token,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getTime: (time) => dispatch(stopTime(time)),
+  stoppedTime: (time) => dispatch(stopTime(time)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Game);

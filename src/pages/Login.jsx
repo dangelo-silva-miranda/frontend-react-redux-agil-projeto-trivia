@@ -33,9 +33,6 @@ class Login extends React.Component {
     const emailPattern = /^[a-z0-9._]+@[a-z0-9]+.[a-z]+(.[a-z]+)?$/i;
     const minimalCharaterSize = 0;
 
-    // const emailTest = RegExp(/^[\w+.]+@\w+\.\w{2,}(?:\.\w{2})?$/);
-    // const verifyEmail = emailTest.test(event.target.value);
-
     if (emailPattern.test(email) && name.length > minimalCharaterSize) {
       this.setState({ disabledButton: false });
     } else {

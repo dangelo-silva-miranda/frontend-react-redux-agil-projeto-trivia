@@ -18,7 +18,7 @@ export const fetchQuestions = (token, questionsNumber) => async (dispatch) => {
 };
 
 export const UPDATE_TIME = 'UPDATE_TIME';
-export const TIME_STOPPED = 'TIME_STOPPED';
+export const STOP_TIME = 'STOP_TIME';
 
 export const updateTime = (time) => ({
   type: UPDATE_TIME,
@@ -27,9 +27,9 @@ export const updateTime = (time) => ({
   },
 });
 
-export const stopTime = (timeStopped) => ({
-  type: TIME_STOPPED,
+export const stopTime = () => ({
+  type: STOP_TIME,
   payload: {
-    timeStopped,
+    stopTime: true,
   },
 });

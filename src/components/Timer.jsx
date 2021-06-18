@@ -11,10 +11,8 @@ class Timer extends Component {
 
     this.state = {
       count: 30,
-      // readyToDesable: false,
     };
     this.timerCounter = this.timerCounter.bind(this);
-    // this.stopTimer = this.stopTimer.bind(this);
   }
 
   componentDidMount() {
@@ -23,26 +21,9 @@ class Timer extends Component {
 
   componentDidUpdate() {
     const { count } = this.state;
-    // this.stopTimer(count);
-    if (count === 0) clearInterval(this.time);
+    const { stopTime } = this.props;
+    if (count === 0 || stopTime === true) clearInterval(this.time);
   }
-
-  // stopTimer(count) {
-  //   const { disableBtns } = this.props;
-  //   const { readyToDesable } = this.state;
-  //   if (count === 0) {
-  //     clearInterval(this.time);
-  //     this.setState({
-  //       readyToDesable: true,
-  //     });
-  //   }
-  //   if (readyToDesable) {
-  //     disableBtns();
-  //     this.setState({
-  //       readyToDesable: false,
-  //     });
-  //   }
-  // }
 
   timerCounter() {
     const ONE_SEC = 1000;
@@ -64,12 +45,16 @@ class Timer extends Component {
 }
 
 Timer.propTypes = {
-  // disableBtns: PropTypes.func.isRequired,
   updateTime: PropTypes.func.isRequired,
+  stopTime: PropTypes.bool.isRequired,
 };
+
+const mapStateToProps = ({ game: { stopTime } }) => ({
+  stopTime,
+});
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({ updateTime }, dispatch)
 );
 
-export default connect(null, mapDispatchToProps)(Timer);
+export default connect(mapStateToProps, mapDispatchToProps)(Timer);
