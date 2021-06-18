@@ -100,7 +100,9 @@ class Game extends Component {
 
   render() {
     return (
-      this.renderQuestions()
+      <div>
+        {this.renderQuestions()}
+      </div>
     );
   }
 }
