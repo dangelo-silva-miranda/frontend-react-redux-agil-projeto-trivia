@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { stopTime } from '../redux/actions/game';
@@ -21,7 +22,12 @@ class Game extends Component {
     this.endTime = this.endTime.bind(this);
     this.buttonNext = this.buttonNext.bind(this);
     this.nextQuestion = this.nextQuestion.bind(this);
+    this.buttonToFeedback = this.buttonToFeedback.bind(this);
     // this.handleDisableButtons = this.handleDisableButtons.bind(this);
+  }
+
+  componentDidMount() {
+    this.endTime();
   }
 
   // handleDisableButtons() {
@@ -29,10 +35,6 @@ class Game extends Component {
   //     disabledButton: true,
   //   });
   // }
-
-  componentDidMount() {
-    this.endTime();
-  }
 
   endTime() {
     const finalTime = 30000;
@@ -52,6 +54,7 @@ class Game extends Component {
   nextQuestion() {
     const { indexQuestion } = this.state;
     this.setState({ indexQuestion: indexQuestion + 1 });
+    // implementar aqui lógica para resetar o cronometro;
   }
 
   buttonNext() {
@@ -67,6 +70,14 @@ class Game extends Component {
         </button>
       );
     }
+  }
+
+  buttonToFeedback() {
+    return (
+      <Link to="/feedback">
+        <button type="button">Feedback</button>
+      </Link>
+    );
   }
 
   renderQuestions() {
@@ -121,23 +132,22 @@ class Game extends Component {
   }
 
   render() {
+    const { indexQuestion } = this.state;
+    const NUM_OF_QUEST = 4;
     return (
       <div>
         {this.renderQuestions()}
-        { this.buttonNext() }
+        { indexQuestion === NUM_OF_QUEST ? this.buttonToFeedback() : this.buttonNext() }
       </div>
     );
   }
 }
 
 Game.propTypes = {
-  // time: PropTypes.number.isRequired,
   questions: PropTypes.arrayOf(PropTypes.object).isRequired,
-  // getTime: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ game: { questions /* time */ }, player: { token } }) => ({
-  // time,
+const mapStateToProps = ({ game: { questions }, player: { token } }) => ({
   questions,
   token,
 });
