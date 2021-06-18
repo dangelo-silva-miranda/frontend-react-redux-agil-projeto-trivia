@@ -22,6 +22,7 @@ class Game extends Component {
     this.handleClick = this.handleClick.bind(this);
     this.endTime = this.endTime.bind(this);
     this.checkAnswer = this.checkAnswer.bind(this);
+    this.addPointsScore = this.addPointsScore.bind(this);
   }
 
   componentDidMount() {
@@ -37,44 +38,49 @@ class Game extends Component {
     }, finalTime);
   }
 
-  checkAnswer(event) {
-    const answer = event.target.innerText;
-    console.log(answer);
+  addPointsScore() {
     const { questions, time } = this.props;
     const { indexQuestion } = this.state;
     const questionSelected = questions[indexQuestion];
-    const { correct_answer: correctAnswer, difficulty } = questionSelected;
+    const { difficulty } = questionSelected;
     const level = { easy: 1, medium: 2, hard: 3 };
     const INITIAL_VALUE = 10;
 
-    if (answer === correctAnswer) {
-      const { easy, medium, hard } = level;
-      switch (difficulty) {
-      case 'easy':
-        return (INITIAL_VALUE + (time * easy));
+    const { easy, medium, hard } = level;
+    switch (difficulty) {
+    case 'easy':
+      return (INITIAL_VALUE + (time * easy));
 
-      case 'medium':
-        return (INITIAL_VALUE + (time * medium));
+    case 'medium':
+      return (INITIAL_VALUE + (time * medium));
 
-      case 'hard':
-        return (INITIAL_VALUE + (time * hard));
+    case 'hard':
+      return (INITIAL_VALUE + (time * hard));
 
-      default:
-        return '';
-      }
+    default:
+      return '';
     }
-    return 0;
+  }
+
+  checkAnswer({ target: { innerText } }) {
+    const { questions, addToScore } = this.props;
+    const { indexQuestion } = this.state;
+    const questionSelected = questions[indexQuestion];
+    const { correct_answer: correctAnswer } = questionSelected;
+    const answer = innerText;
+    if (answer === correctAnswer) {
+      const store = this.addPointsScore();
+      addToScore(store);
+    }
   }
 
   handleClick(event) {
-    const { stoppedTime, addToScore } = this.props;
+    const { stoppedTime } = this.props;
     this.setState({
       chosenAnswer: true,
     });
     stoppedTime();
-    const score = this.checkAnswer(event);
-    console.log(score);
-    addToScore(score);
+    this.checkAnswer(event);
   }
 
   randomQuestions(answers) {
@@ -133,7 +139,10 @@ class Game extends Component {
 
   render() {
     return (
-      this.renderQuestions()
+      <>
+        <button type="button" onClick={ this.checkAnswer }>score</button>
+        {this.renderQuestions()}
+      </>
     );
   }
 }
@@ -152,7 +161,7 @@ const mapStateToProps = ({ game: { questions, time }, player: { token } }) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  stoppedTime: (time) => dispatch(stopTime(time)),
+  stoppedTime: () => dispatch(stopTime()),
   addToScore: (score) => dispatch(addScore(score)),
 });
 
