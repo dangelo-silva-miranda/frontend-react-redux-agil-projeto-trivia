@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+
+import { stopTime } from '../redux/actions/game';
 import Header from '../components/Header';
+import Timer from '../components/Timer';
+import './css/Game.css';
 
 class Game extends Component {
   constructor(props) {
@@ -9,18 +13,46 @@ class Game extends Component {
 
     this.state = {
       indexQuestion: 0,
-      timer: 0,
-      // chosenAnswer: false,
+      chosenAnswer: false,
+      disabledButton: false,
     };
     this.renderQuestions = this.renderQuestions.bind(this);
-    this.logicaDeRenderizaçãoDoBotão = this.logicaDeRenderizaçãoDoBotão.bind(this);
+    this.handleClick = this.handleClick.bind(this);
+    this.endTime = this.endTime.bind(this);
+    this.buttonNext = this.buttonNext.bind(this);
+    this.nextQuestion = this.nextQuestion.bind(this);
+    // this.handleDisableButtons = this.handleDisableButtons.bind(this);
   }
 
-  // function() {
-  //   const { indexQuestion } = this.state;
-  //   this.setState({ indexQuestion: indexQuestion + 1});
-  //   }
+  // handleDisableButtons() {
+  //   this.setState({
+  //     disabledButton: true,
+  //   });
   // }
+
+  componentDidMount() {
+    this.endTime();
+  }
+
+  endTime() {
+    const finalTime = 30000;
+    setTimeout(() => {
+      this.setState({
+        disabledButton: true,
+      });
+    }, finalTime);
+  }
+
+  handleClick() {
+    this.setState({
+      chosenAnswer: true,
+    });
+  }
+
+  nextQuestion() {
+     const { indexQuestion } = this.state;
+     this.setState({ indexQuestion: indexQuestion + 1});
+     }
 
   // A cada nova pergunta o temporizador deve ser reiniciado para 30 segundos
   // temporizador(() => {
@@ -36,17 +68,29 @@ class Game extends Component {
 
   renderQuestions() {
     const { questions } = this.props;
-    const { indexQuestion } = this.state;
+    const { indexQuestion, chosenAnswer, disabledButton } = this.state;
     const questionSelected = questions[indexQuestion];
     const {
-      category,
-      question,
+      category, question,
       correct_answer: correctAnswer,
       incorrect_answers: incorrectAswers } = questionSelected;
+
+    const classButtons = (index, chosenAns) => {
+      if ((index || index === 0) && chosenAns) {
+        return 'incorrectAnswer';
+      }
+      if ((!index && chosenAnswer)) {
+        return 'correctAnswer';
+      }
+      return '';
+    };
 
     const button = (answer, index) => (
       <button
         type="button"
+        disabled={ disabledButton }
+        onClick={ this.handleClick }
+        className={ classButtons(index, chosenAnswer) }
         data-testid={ (index || index === 0) ? (
           `wrong-answer-${index}`) : ('correct-answer') }
       >
@@ -68,27 +112,44 @@ class Game extends Component {
         <h5 data-testid="question-category">{category}</h5>
         <h5 data-testid="question-text">{question}</h5>
         {randomAnswers.map((buttons) => buttons)}
+        <Timer disableBtns={ this.handleDisableButtons } />
       </>
     );
   }
-
+buttonNext() {
+  const { chosenAnswer } = this.state;
+  if (chosenAnswer) {
+    return <button
+    data-testid="btn-next"
+    onClick={this.nextQuestion}
+    >Next
+    </button>
+  }
+}
   render() {
     return (
       <div>
         {this.renderQuestions()}
-
+        { this.buttonNext() }
       </div>
     );
   }
 }
 
 Game.propTypes = {
+  // time: PropTypes.number.isRequired,
   questions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  // getTime: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ game: { questions }, player: { token } }) => ({
+const mapStateToProps = ({ game: { questions /* time */ }, player: { token } }) => ({
+  // time,
   questions,
   token,
 });
 
-export default connect(mapStateToProps)(Game);
+const mapDispatchToProps = (dispatch) => ({
+  getTime: (time) => dispatch(stopTime(time)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Game);

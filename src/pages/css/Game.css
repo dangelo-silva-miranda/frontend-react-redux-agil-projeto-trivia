@@ -1,0 +1,11 @@
+button {
+  cursor: pointer;
+}
+
+.correctAnswer {
+  border: 3px solid rgb(6, 240, 15);
+}
+
+.incorrectAnswer {
+  border: 3px solid red;
+}
