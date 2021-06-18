@@ -60,3 +60,12 @@ export const fetchToken = () => async (dispatch) => {
 //       requestTokenError(tokenError),
 //     ));
 // };
+
+export const ADD_SCORE = 'ADD_SCORE';
+
+export const addScore = (updateScore) => ({
+  type: ADD_SCORE,
+  payload: {
+    updateScore,
+  },
+});

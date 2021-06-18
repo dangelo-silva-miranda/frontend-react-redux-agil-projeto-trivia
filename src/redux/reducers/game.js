@@ -10,8 +10,8 @@ const keyQuestionsLS = 'questions';
 
 const INITIAL_STATE = {
   questions: restoreFromLocalStorage(keyQuestionsLS),
-  time: 30,
-  stopTime: 30,
+  time: undefined,
+  stopTime: false,
 };
 
 export default (state = INITIAL_STATE, { type, payload }) => {
@@ -27,10 +27,14 @@ export default (state = INITIAL_STATE, { type, payload }) => {
 
   case UPDATE_TIME: {
     const { time } = payload;
-    return {
-      ...state,
-      time,
-    };
+    const { stopTime } = state;
+    if (stopTime) {
+      return {
+        ...state,
+        time,
+      };
+    }
+    return state;
   }
 
   case STOP_TIME: {

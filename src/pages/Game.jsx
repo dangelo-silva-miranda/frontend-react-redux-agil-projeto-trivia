@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { stopTime } from '../redux/actions/game';
+import { addScore } from '../redux/actions/player';
 import Header from '../components/Header';
 import Timer from '../components/Timer';
 import './css/Game.css';
@@ -15,15 +16,24 @@ class Game extends Component {
       indexQuestion: 0,
       chosenAnswer: false,
       disabledButton: false,
+      answerHasCorrect: false,
+      sendToScore: false,
     };
     this.renderQuestions = this.renderQuestions.bind(this);
     this.randomQuestions = this.randomQuestions.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.endTime = this.endTime.bind(this);
+    this.checkAnswer = this.checkAnswer.bind(this);
+    this.addPointsScore = this.addPointsScore.bind(this);
+    this.sendScore = this.sendScore.bind(this);
   }
 
   componentDidMount() {
     this.endTime();
+  }
+
+  componentDidUpdate() {
+    this.sendScore();
   }
 
   endTime() {
@@ -35,12 +45,66 @@ class Game extends Component {
     }, finalTime);
   }
 
-  handleClick() {
+  sendScore() {
+    const { addToScore } = this.props;
+    const { sendToScore } = this.state;
+    if (sendToScore) {
+      const syncTime = 1000;
+      setTimeout(() => {
+        const score = this.addPointsScore();
+        addToScore(score);
+      }, syncTime);
+    }
+  }
+
+  addPointsScore() {
+    const { questions, time } = this.props;
+    const { indexQuestion, answerHasCorrect } = this.state;
+    const questionSelected = questions[indexQuestion];
+    const { difficulty } = questionSelected;
+    const level = { easy: 1, medium: 2, hard: 3 };
+    const INITIAL_VALUE = 10;
+    this.setState({
+      sendToScore: false,
+    });
+
+    if (answerHasCorrect) {
+      const { easy, medium, hard } = level;
+      switch (difficulty) {
+      case 'easy':
+        return (INITIAL_VALUE + (time * easy));
+      case 'medium':
+        return (INITIAL_VALUE + (time * medium));
+      case 'hard':
+        return (INITIAL_VALUE + (time * hard));
+      default:
+        return '';
+      }
+    }
+    return 0;
+  }
+
+  checkAnswer({ target: { innerText } }) {
+    const { questions } = this.props;
+    const { indexQuestion } = this.state;
+    const questionSelected = questions[indexQuestion];
+    const { correct_answer: correctAnswer } = questionSelected;
+    const answer = innerText;
+    if (answer === correctAnswer) {
+      this.setState({
+        answerHasCorrect: true,
+        sendToScore: true,
+      });
+    }
+  }
+
+  handleClick(event) {
     const { stoppedTime } = this.props;
     this.setState({
       chosenAnswer: true,
     });
     stoppedTime();
+    this.checkAnswer(event);
   }
 
   randomQuestions(answers) {
@@ -106,16 +170,20 @@ class Game extends Component {
 
 Game.propTypes = {
   questions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  time: PropTypes.number.isRequired,
   stoppedTime: PropTypes.func.isRequired,
+  addToScore: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ game: { questions }, player: { token } }) => ({
+const mapStateToProps = ({ game: { questions, time }, player: { token } }) => ({
   questions,
   token,
+  time,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  stoppedTime: (time) => dispatch(stopTime(time)),
+  stoppedTime: () => dispatch(stopTime()),
+  addToScore: (score) => dispatch(addScore(score)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Game);
