@@ -50,21 +50,24 @@ class Game extends Component {
   }
 
   nextQuestion() {
-     const { indexQuestion } = this.state;
-     this.setState({ indexQuestion: indexQuestion + 1});
-     }
+    const { indexQuestion } = this.state;
+    this.setState({ indexQuestion: indexQuestion + 1 });
+  }
 
-  // A cada nova pergunta o temporizador deve ser reiniciado para 30 segundos
-  // temporizador(() => {
-  //   const interval = setInterval(() => {
-  //     this.setState({ timer: timer + 1 })
-  //   }, 1000);
-
-  // Após a quinta pergunta, o botão "Próxima" deve redirecionar a pessoa para a tela de Feedback
-
-  // Para perguntas com type:"boolean", mostrar somente 2 campos (um para cada resposta possível)
-  // Para perguntas com type:"multiple", mostrar a quantidade necessária de campos (um para cada resposta possível)
-  // O elemento da mensagem de feedback deve possuir o atributo data-testid com o valor feedback-text
+  buttonNext() {
+    const { chosenAnswer } = this.state;
+    if (chosenAnswer) {
+      return (
+        <button
+          type="button"
+          data-testid="btn-next"
+          onClick={ this.nextQuestion }
+        >
+          Next
+        </button>
+      );
+    }
+  }
 
   renderQuestions() {
     const { questions } = this.props;
@@ -116,16 +119,7 @@ class Game extends Component {
       </>
     );
   }
-buttonNext() {
-  const { chosenAnswer } = this.state;
-  if (chosenAnswer) {
-    return <button
-    data-testid="btn-next"
-    onClick={this.nextQuestion}
-    >Next
-    </button>
-  }
-}
+
   render() {
     return (
       <div>
