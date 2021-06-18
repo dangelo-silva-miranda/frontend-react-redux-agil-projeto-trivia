@@ -8,7 +8,7 @@ import {
 import { saveLocalStorage, toHash } from '../../functions';
 import { GRAVATAR_API } from '../../services/api';
 
-const initialState = {
+const INITIAL_STATE = {
   name: '',
   assertions: 0,
   score: 0,
@@ -18,7 +18,7 @@ const initialState = {
   isFetching: false,
 };
 
-export default (state = initialState, { type, payload }) => {
+export default (state = INITIAL_STATE, { type, payload }) => {
   switch (type) {
   case SAVE_NAME_EMAIL_PLAYER: {
     const { name, email } = payload;
