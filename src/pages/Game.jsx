@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { stopTime } from '../redux/actions/game';
+import { addScore } from '../redux/actions/player';
 import Header from '../components/Header';
 import Timer from '../components/Timer';
 import './css/Game.css';
@@ -20,6 +21,7 @@ class Game extends Component {
     this.randomQuestions = this.randomQuestions.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.endTime = this.endTime.bind(this);
+    this.checkAnswer = this.checkAnswer.bind(this);
   }
 
   componentDidMount() {
@@ -35,12 +37,44 @@ class Game extends Component {
     }, finalTime);
   }
 
-  handleClick() {
-    const { stoppedTime } = this.props;
+  checkAnswer(event) {
+    const answer = event.target.innerText;
+    console.log(answer);
+    const { questions, time } = this.props;
+    const { indexQuestion } = this.state;
+    const questionSelected = questions[indexQuestion];
+    const { correct_answer: correctAnswer, difficulty } = questionSelected;
+    const level = { easy: 1, medium: 2, hard: 3 };
+    const INITIAL_VALUE = 10;
+
+    if (answer === correctAnswer) {
+      const { easy, medium, hard } = level;
+      switch (difficulty) {
+      case 'easy':
+        return (INITIAL_VALUE + (time * easy));
+
+      case 'medium':
+        return (INITIAL_VALUE + (time * medium));
+
+      case 'hard':
+        return (INITIAL_VALUE + (time * hard));
+
+      default:
+        return '';
+      }
+    }
+    return 0;
+  }
+
+  handleClick(event) {
+    const { stoppedTime, addToScore } = this.props;
     this.setState({
       chosenAnswer: true,
     });
     stoppedTime();
+    const score = this.checkAnswer(event);
+    console.log(score);
+    addToScore(score);
   }
 
   randomQuestions(answers) {
@@ -106,16 +140,20 @@ class Game extends Component {
 
 Game.propTypes = {
   questions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  time: PropTypes.number.isRequired,
   stoppedTime: PropTypes.func.isRequired,
+  addToScore: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ game: { questions }, player: { token } }) => ({
+const mapStateToProps = ({ game: { questions, time }, player: { token } }) => ({
   questions,
   token,
+  time,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   stoppedTime: (time) => dispatch(stopTime(time)),
+  addToScore: (score) => dispatch(addScore(score)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Game);
