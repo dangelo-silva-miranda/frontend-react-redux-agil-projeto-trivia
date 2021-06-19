@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 
 import { fetchToken, saveNameEmailPlayer } from '../redux/actions/player';
 import { fetchQuestions } from '../redux/actions/game';
+import { saveLocalStorage, toHash } from '../functions';
+import { GRAVATAR_API } from '../services/api';
 
 class Login extends React.Component {
   constructor(props) {
@@ -33,9 +35,6 @@ class Login extends React.Component {
     const emailPattern = /^[a-z0-9._]+@[a-z0-9]+.[a-z]+(.[a-z]+)?$/i;
     const minimalCharaterSize = 0;
 
-    // const emailTest = RegExp(/^[\w+.]+@\w+\.\w{2,}(?:\.\w{2})?$/);
-    // const verifyEmail = emailTest.test(event.target.value);
-
     if (emailPattern.test(email) && name.length > minimalCharaterSize) {
       this.setState({ disabledButton: false });
     } else {
@@ -44,11 +43,18 @@ class Login extends React.Component {
   }
 
   async handleClick(name, email) {
-    const { getToken, saveNameEmail, token, getQuestions, history } = this.props;
+    const {
+      getToken, saveNameEmail, token, getQuestions, history,
+    } = this.props;
+
     await getToken();
-    saveNameEmail(name, email);
+    const hash = toHash(email);
+    const picture = `${GRAVATAR_API}${hash}`;
+    saveNameEmail(name, email, picture);
     const questionsNumber = 5;
     await getQuestions(token, questionsNumber);
+    const key = 'state';
+    saveLocalStorage(key, { player: { name, score: 0, gravatarEmail: email, picture } });
     history.push('/game');
   }
 

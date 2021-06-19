@@ -4,9 +4,9 @@ import { Route, Switch } from 'react-router';
 import './App.css';
 import Config from './pages/Config';
 import Feedback from './pages/Feedback';
-import Game from './pages/Game';
 import Login from './pages/Login';
 import Ranking from './pages/Ranking';
+import Game from './pages/Game';
 
 export default function App() {
   return (

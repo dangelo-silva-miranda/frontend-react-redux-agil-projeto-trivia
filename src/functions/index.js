@@ -13,5 +13,5 @@ export const restoreFromLocalStorage = (key) => {
   if (localStorageKey) {
     return JSON.parse(localStorageKey);
   }
-  return [];
+  return '';
 };

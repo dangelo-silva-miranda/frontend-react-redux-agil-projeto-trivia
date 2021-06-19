@@ -2,11 +2,12 @@ import { fetchAPI, TOKEN_API } from '../../services/api';
 
 export const SAVE_NAME_EMAIL_PLAYER = 'SAVE_NAME_EMAIL_PLAYER';
 
-export const saveNameEmailPlayer = (name, email) => ({
+export const saveNameEmailPlayer = (name, email, picture) => ({
   type: SAVE_NAME_EMAIL_PLAYER,
   payload: {
     name,
     email,
+    picture,
   },
 });
 
@@ -60,3 +61,12 @@ export const fetchToken = () => async (dispatch) => {
 //       requestTokenError(tokenError),
 //     ));
 // };
+
+export const ADD_SCORE = 'ADD_SCORE';
+
+export const addScore = (updateScore) => ({
+  type: ADD_SCORE,
+  payload: {
+    updateScore,
+  },
+});

@@ -2,6 +2,11 @@ button {
   cursor: pointer;
 }
 
+.answersButtons {
+  align-items: flex-start;
+  display: flex;
+}
+
 .correctAnswer {
   border: 3px solid rgb(6, 240, 15);
 }
