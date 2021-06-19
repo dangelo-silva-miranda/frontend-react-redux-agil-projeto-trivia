@@ -5,7 +5,8 @@ import { Link } from 'react-router-dom';
 
 import { fetchToken, saveNameEmailPlayer } from '../redux/actions/player';
 import { fetchQuestions } from '../redux/actions/game';
-import { saveLocalStorage } from '../functions';
+import { saveLocalStorage, toHash } from '../functions';
+import { GRAVATAR_API } from '../services/api';
 
 class Login extends React.Component {
   constructor(props) {
@@ -47,11 +48,13 @@ class Login extends React.Component {
     } = this.props;
 
     await getToken();
-    saveNameEmail(name, email);
+    const hash = toHash(email);
+    const picture = `${GRAVATAR_API}${hash}`;
+    saveNameEmail(name, email, picture);
     const questionsNumber = 5;
     await getQuestions(token, questionsNumber);
     const key = 'state';
-    saveLocalStorage(key, { player: { name, score: 0, gravatarEmail: email } });
+    saveLocalStorage(key, { player: { name, score: 0, gravatarEmail: email, picture } });
     history.push('/game');
   }
 

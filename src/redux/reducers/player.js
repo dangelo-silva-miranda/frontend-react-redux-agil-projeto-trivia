@@ -6,24 +6,22 @@ import {
   ADD_SCORE,
 } from '../actions/player';
 
-import { saveLocalStorage, toHash } from '../../functions';
-import { GRAVATAR_API } from '../../services/api';
+import { restoreFromLocalStorage, saveLocalStorage } from '../../functions';
+
+const { player } = restoreFromLocalStorage('state');
 
 const INITIAL_STATE = {
-  name: '',
-  assertions: 0,
+  name: (player) ? player.name : '',
   score: 0,
-  gravatarEmail: '',
-  picture: '',
-  token: '',
+  gravatarEmail: (player) ? player.gravatarEmail : '',
+  picture: (player) ? player.picture : '',
+  token: restoreFromLocalStorage('token'),
   isFetching: false,
 };
 
 export default (state = INITIAL_STATE, { type, payload }) => {
   switch (type) {
-  case SAVE_NAME_EMAIL_PLAYER: { const { name, email } = payload;
-    const hash = toHash(email);
-    const picture = `${GRAVATAR_API}${hash}`;
+  case SAVE_NAME_EMAIL_PLAYER: { const { name, email, picture } = payload;
     return {
       ...state,
       name,
