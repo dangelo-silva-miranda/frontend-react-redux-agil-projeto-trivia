@@ -1,7 +1,7 @@
 import {
   REQUEST_QUESTIONS_SUC,
-  UPDATE_TIME,
-  STOP_TIME,
+  // UPDATE_TIME,
+  // STOP_TIME,
 } from '../actions/game';
 
 import { saveLocalStorage, restoreFromLocalStorage } from '../../functions';
@@ -10,8 +10,8 @@ const keyQuestionsLS = 'questions';
 
 const INITIAL_STATE = {
   questions: restoreFromLocalStorage(keyQuestionsLS),
-  time: undefined,
-  stopTime: false,
+  // time: undefined,
+  // stopTime: false,
 };
 
 export default (state = INITIAL_STATE, { type, payload }) => {
@@ -25,25 +25,25 @@ export default (state = INITIAL_STATE, { type, payload }) => {
     };
   }
 
-  case UPDATE_TIME: {
-    const { time } = payload;
-    const { stopTime } = state;
-    if (stopTime) {
-      return {
-        ...state,
-        time,
-      };
-    }
-    return state;
-  }
+  // case UPDATE_TIME: {
+  //   const { time } = payload;
+  //   const { stopTime } = state;
+  //   if (stopTime) {
+  //     return {
+  //       ...state,
+  //       time,
+  //     };
+  //   }
+  //   return state;
+  // }
 
-  case STOP_TIME: {
-    const { stopTime } = payload;
-    return {
-      ...state,
-      stopTime,
-    };
-  }
+  // case STOP_TIME: {
+  //   const { stopTime } = payload;
+  //   return {
+  //     ...state,
+  //     stopTime,
+  //   };
+  // }
 
   default:
     return state;

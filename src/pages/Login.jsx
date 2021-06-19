@@ -42,13 +42,16 @@ class Login extends React.Component {
   }
 
   async handleClick(name, email) {
-    const { getToken, saveNameEmail, token, getQuestions, history } = this.props;
+    const {
+      getToken, saveNameEmail, token, getQuestions, history,
+    } = this.props;
+
     await getToken();
     saveNameEmail(name, email);
     const questionsNumber = 5;
     await getQuestions(token, questionsNumber);
     const key = 'state';
-    saveLocalStorage(key, { player: { name, score: 0 } });
+    saveLocalStorage(key, { player: { name, score: 0, gravatarEmail: email } });
     history.push('/game');
   }
 

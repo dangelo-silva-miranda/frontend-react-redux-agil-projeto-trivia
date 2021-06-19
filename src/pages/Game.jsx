@@ -1,83 +1,63 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 
-import { stopTime } from '../redux/actions/game';
-import { addScore } from '../redux/actions/player';
-import Header from '../components/Header';
-import Timer from '../components/Timer';
 import './css/Game.css';
+import Header from '../components/Header';
+import Questions from '../components/Questions';
 import { saveLocalStorage } from '../functions';
+import { addScore } from '../redux/actions/player';
 
-class Game extends Component {
+class Trivia extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      time: 30,
+      stopTime: false,
       indexQuestion: 0,
       chosenAnswer: false,
       disabledButton: false,
-      answerHasCorrect: false,
-      sendToScore: false,
     };
-    this.renderQuestions = this.renderQuestions.bind(this);
-    this.randomQuestions = this.randomQuestions.bind(this);
+    this.timer = this.timer.bind(this);
     this.handleClick = this.handleClick.bind(this);
-    this.endTime = this.endTime.bind(this);
-    this.checkAnswer = this.checkAnswer.bind(this);
-    this.addPointsScore = this.addPointsScore.bind(this);
-    this.sendScore = this.sendScore.bind(this);
+    this.stopTimer = this.stopTimer.bind(this);
+    this.calcPointsScore = this.calcPointsScore.bind(this);
   }
 
   componentDidMount() {
-    this.endTime();
+    this.timer();
   }
 
   componentDidUpdate() {
-    this.sendScore();
+    this.stopTimer();
   }
 
-  endTime() {
-    const finalTime = 30000;
-    setTimeout(() => {
-      this.setState({
-        disabledButton: true,
-      });
-    }, finalTime);
-  }
-
-  sendScore() {
-    const { addToScore, score } = this.props;
-    const { sendToScore } = this.state;
-    if (sendToScore) {
-      const syncTime = 1000;
-      setTimeout(() => {
-        const sumQuestion = this.addPointsScore();
-        const currScore = score + sumQuestion;
-        const newScore = {
-          player: {
-            score: currScore,
-          },
-        };
-        const key = 'state';
-        saveLocalStorage(key, newScore);
-        addToScore(currScore);
-      }, syncTime);
-      this.setState({
-        sendToScore: false,
-      });
+  stopTimer() {
+    const { time, stopTime, disabledButton } = this.state;
+    if ((time === 0 || stopTime === true) && !disabledButton) {
+      clearInterval(this.time);
+      this.setState({ disabledButton: true });
     }
   }
 
-  addPointsScore() {
-    const { questions, time } = this.props;
-    const { indexQuestion, answerHasCorrect } = this.state;
+  timer() {
+    const ONE_SEC = 1000;
+    this.time = setInterval(() => {
+      this.setState((prevState) => ({ time: prevState.time - 1 }));
+    }, ONE_SEC);
+  }
+
+  calcPointsScore({ target: { innerText } }) {
+    const { state: { time, indexQuestion }, props: { questions } } = this;
     const questionSelected = questions[indexQuestion];
-    const { difficulty } = questionSelected;
+    const { correct_answer: correctAnswer, difficulty } = questionSelected;
+    const answer = innerText;
     const level = { easy: 1, medium: 2, hard: 3 };
     const INITIAL_VALUE = 10;
 
-    if (answerHasCorrect) {
+    if (answer === correctAnswer) {
       const { easy, medium, hard } = level;
       switch (difficulty) {
       case 'easy':
@@ -90,111 +70,72 @@ class Game extends Component {
         return '';
       }
     }
-    return 0;
-  }
-
-  checkAnswer({ target: { innerText } }) {
-    const { questions } = this.props;
-    const { indexQuestion } = this.state;
-    const questionSelected = questions[indexQuestion];
-    const { correct_answer: correctAnswer } = questionSelected;
-    const answer = innerText;
-    if (answer === correctAnswer) {
-      this.setState({
-        answerHasCorrect: true,
-        sendToScore: true,
-      });
-    }
   }
 
   handleClick(event) {
-    const { stoppedTime } = this.props;
+    const {
+      props: { addScore: addToScore, score, name, gravatarEmail,
+      } } = this;
+
     this.setState({
+      stopTime: true,
       chosenAnswer: true,
     });
-    stoppedTime();
-    this.checkAnswer(event);
-  }
-
-  randomQuestions(answers) {
-    const FACTOR_POSITION = 0.5;
-    const randomAnswers = [...answers].sort(() => FACTOR_POSITION - Math.random());
-    return randomAnswers;
-  }
-
-  renderQuestions() {
-    const { questions } = this.props;
-    const { indexQuestion, chosenAnswer, disabledButton } = this.state;
-    const questionSelected = questions[indexQuestion];
-    const { question, category, correct_answer: correctAnswer,
-      incorrect_answers: incorrectAswers } = questionSelected;
-
-    const classButtons = (index, chosenAns) => {
-      if ((index || index === 0) && chosenAns) {
-        return 'incorrectAnswer';
-      }
-      if ((!index && chosenAnswer)) {
-        return 'correctAnswer';
-      }
-      return '';
-    };
-
-    const button = (answer, index) => (
-      <button
-        type="button"
-        disabled={ disabledButton }
-        onClick={ this.handleClick }
-        className={ classButtons(index, chosenAnswer) }
-        data-testid={ (index || index === 0) ? (
-          `wrong-answer-${index}`) : ('correct-answer') }
-      >
-        { answer }
-      </button>
-    );
-
-    const correct = button(correctAnswer);
-    const incorrect = incorrectAswers.map((incorrectAswer, index) => (
-      button(incorrectAswer, index)
-    ));
-
-    const answers = [correct, ...incorrect];
-    const randomAnswers = this.randomQuestions(answers);
-    return (
-      <>
-        <Header />
-        <h5 data-testid="question-category">{category}</h5>
-        <h5 data-testid="question-text">{question}</h5>
-        {randomAnswers.map((buttons) => buttons)}
-        <Timer />
-      </>
-    );
+    const scorePage = this.calcPointsScore(event);
+    if (scorePage) {
+      const currScore = score + scorePage;
+      const newScore = {
+        player: {
+          name,
+          gravatarEmail,
+          score: currScore,
+        },
+      };
+      const key = 'state';
+      saveLocalStorage(key, newScore);
+      addToScore(currScore);
+    }
   }
 
   render() {
+    const {
+      time, indexQuestion, chosenAnswer, disabledButton,
+    } = this.state;
     return (
-      this.renderQuestions()
+      <div>
+        <Header />
+        <Questions
+          handleClick={ this.handleClick }
+          indexQuestion={ indexQuestion }
+          chosenAnswer={ chosenAnswer }
+          disabledButton={ disabledButton }
+        />
+        <h5>{`Tempo: ${time}`}</h5>
+      </div>
     );
   }
 }
 
-Game.propTypes = {
+Trivia.propTypes = {
   questions: PropTypes.arrayOf(PropTypes.object).isRequired,
-  time: PropTypes.number.isRequired,
   score: PropTypes.number.isRequired,
-  stoppedTime: PropTypes.func.isRequired,
-  addToScore: PropTypes.func.isRequired,
+  name: PropTypes.string.isRequired,
+  gravatarEmail: PropTypes.string.isRequired,
+  addScore: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ game: { questions, time }, player: { token, score } }) => ({
+const mapStateToProps = ({
+  game: { questions },
+  player: { name, gravatarEmail, score },
+}) => ({
+
   questions,
-  token,
-  time,
+  name,
+  gravatarEmail,
   score,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  stoppedTime: () => dispatch(stopTime()),
-  addToScore: (score) => dispatch(addScore(score)),
-});
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({ addScore }, dispatch));
 
-export default connect(mapStateToProps, mapDispatchToProps)(Game);
+export default connect(mapStateToProps, mapDispatchToProps)(Trivia);
