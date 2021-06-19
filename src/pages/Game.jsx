@@ -24,6 +24,8 @@ class Trivia extends Component {
     this.handleClick = this.handleClick.bind(this);
     this.stopTimer = this.stopTimer.bind(this);
     this.calcPointsScore = this.calcPointsScore.bind(this);
+    this.buttonNext = this.buttonNext.bind(this);
+    this.nextQuestion = this.nextQuestion.bind(this);
   }
 
   componentDidMount() {
@@ -47,6 +49,26 @@ class Trivia extends Component {
     this.time = setInterval(() => {
       this.setState((prevState) => ({ time: prevState.time - 1 }));
     }, ONE_SEC);
+  }
+
+  nextQuestion() {
+    const { indexQuestion } = this.state;
+    this.setState({ indexQuestion: indexQuestion + 1 });
+  }
+
+  buttonNext() {
+    const { chosenAnswer } = this.state;
+    if (chosenAnswer) {
+      return (
+        <button
+          type="button"
+          data-testid="btn-next"
+          onClick={ this.nextQuestion }
+        >
+          Próxima Pergunta
+        </button>
+      );
+    }
   }
 
   calcPointsScore({ target: { innerText } }) {
@@ -111,6 +133,7 @@ class Trivia extends Component {
           disabledButton={ disabledButton }
         />
         <h5>{`Tempo: ${time}`}</h5>
+        { this.buttonNext() }
       </div>
     );
   }
