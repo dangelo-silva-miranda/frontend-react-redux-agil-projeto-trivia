@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 
@@ -9,7 +10,7 @@ import Questions from '../components/Questions';
 import { saveLocalStorage } from '../functions';
 import { addScore } from '../redux/actions/player';
 
-class Trivia extends Component {
+class Game extends Component {
   constructor(props) {
     super(props);
 
@@ -26,6 +27,7 @@ class Trivia extends Component {
     this.calcPointsScore = this.calcPointsScore.bind(this);
     this.buttonNext = this.buttonNext.bind(this);
     this.nextQuestion = this.nextQuestion.bind(this);
+    this.buttonToFeedback = this.buttonToFeedback.bind(this);
   }
 
   componentDidMount() {
@@ -54,6 +56,7 @@ class Trivia extends Component {
   nextQuestion() {
     const { indexQuestion } = this.state;
     this.setState({ indexQuestion: indexQuestion + 1 });
+    // implementar aqui lógica para resetar o cronometro;
   }
 
   buttonNext() {
@@ -69,6 +72,14 @@ class Trivia extends Component {
         </button>
       );
     }
+  }
+
+  buttonToFeedback() {
+    return (
+      <Link to="/feedback">
+        <button type="button">Feedback</button>
+      </Link>
+    );
   }
 
   calcPointsScore({ target: { innerText } }) {
@@ -123,6 +134,7 @@ class Trivia extends Component {
     const {
       time, indexQuestion, chosenAnswer, disabledButton,
     } = this.state;
+    const NUM_OF_QUEST = 4;
     return (
       <div>
         <Header />
@@ -133,13 +145,13 @@ class Trivia extends Component {
           disabledButton={ disabledButton }
         />
         <h5>{`Tempo: ${time}`}</h5>
-        { this.buttonNext() }
+        { indexQuestion === NUM_OF_QUEST ? this.buttonToFeedback() : this.buttonNext() }
       </div>
     );
   }
 }
 
-Trivia.propTypes = {
+Game.propTypes = {
   questions: PropTypes.arrayOf(PropTypes.object).isRequired,
   score: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
@@ -161,4 +173,4 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({ addScore }, dispatch));
 
-export default connect(mapStateToProps, mapDispatchToProps)(Trivia);
+export default connect(mapStateToProps, mapDispatchToProps)(Game);
