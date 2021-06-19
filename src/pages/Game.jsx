@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 
@@ -9,6 +8,7 @@ import Header from '../components/Header';
 import Questions from '../components/Questions';
 import { saveLocalStorage } from '../functions';
 import { addScore } from '../redux/actions/player';
+import { newAnswers } from '../redux/actions/game';
 
 class Game extends Component {
   constructor(props) {
@@ -27,7 +27,6 @@ class Game extends Component {
     this.calcPointsScore = this.calcPointsScore.bind(this);
     this.buttonNext = this.buttonNext.bind(this);
     this.nextQuestion = this.nextQuestion.bind(this);
-    this.buttonToFeedback = this.buttonToFeedback.bind(this);
   }
 
   componentDidMount() {
@@ -39,9 +38,11 @@ class Game extends Component {
   }
 
   stopTimer() {
-    const { time, stopTime, disabledButton } = this.state;
-    if ((time === 0 || stopTime === true) && !disabledButton) {
+    const { time, stopTime, disabledButton, chosenAnswer } = this.state;
+    if ((time === 0 || stopTime === true)) {
       clearInterval(this.time);
+    }
+    if ((time === 0 || chosenAnswer) && !disabledButton) {
       this.setState({ disabledButton: true });
     }
   }
@@ -54,14 +55,27 @@ class Game extends Component {
   }
 
   nextQuestion() {
-    const { indexQuestion } = this.state;
-    this.setState({ indexQuestion: indexQuestion + 1 });
-    // implementar aqui lógica para resetar o cronometro;
+    const { state: { indexQuestion }, props: { newAnswers: uptAnswers, history } } = this;
+
+    this.setState({
+      indexQuestion: indexQuestion + 1,
+      chosenAnswer: false,
+      disabledButton: false,
+      stopTime: false,
+      time: 30,
+    });
+    const NUM_OF_QUEST = 4;
+    if (indexQuestion === NUM_OF_QUEST) {
+      history.push('/feedback');
+    } else {
+      uptAnswers(true);
+      this.timer();
+    }
   }
 
   buttonNext() {
-    const { chosenAnswer } = this.state;
-    if (chosenAnswer) {
+    const { chosenAnswer, time } = this.state;
+    if (chosenAnswer || time === 0) {
       return (
         <button
           type="button"
@@ -72,14 +86,6 @@ class Game extends Component {
         </button>
       );
     }
-  }
-
-  buttonToFeedback() {
-    return (
-      <Link to="/feedback">
-        <button type="button">Feedback</button>
-      </Link>
-    );
   }
 
   calcPointsScore({ target: { innerText } }) {
@@ -134,7 +140,7 @@ class Game extends Component {
     const {
       time, indexQuestion, chosenAnswer, disabledButton,
     } = this.state;
-    const NUM_OF_QUEST = 4;
+
     return (
       <div>
         <Header />
@@ -145,7 +151,7 @@ class Game extends Component {
           disabledButton={ disabledButton }
         />
         <h5>{`Tempo: ${time}`}</h5>
-        { indexQuestion === NUM_OF_QUEST ? this.buttonToFeedback() : this.buttonNext() }
+        { this.buttonNext() }
       </div>
     );
   }
@@ -153,10 +159,12 @@ class Game extends Component {
 
 Game.propTypes = {
   questions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  history: PropTypes.objectOf(Object).isRequired,
   score: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
   gravatarEmail: PropTypes.string.isRequired,
   addScore: PropTypes.func.isRequired,
+  newAnswers: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({
@@ -171,6 +179,6 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({ addScore }, dispatch));
+  bindActionCreators({ addScore, newAnswers }, dispatch));
 
 export default connect(mapStateToProps, mapDispatchToProps)(Game);

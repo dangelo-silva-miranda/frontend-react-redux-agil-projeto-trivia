@@ -24,18 +24,8 @@ const mapStateToProps = ({ player: { name, score, picture } }) => ({
 
 Header.propTypes = {
   name: PropTypes.string.isRequired,
-  score: PropTypes.number,
+  score: PropTypes.number.isRequired,
   picture: PropTypes.string.isRequired,
 };
 
-// Specifies the default values for props:
-// https://pt-br.reactjs.org/docs/typechecking-with-proptypes.html#default-prop-values
-Header.defaultProps = {
-  score: 0,
-};
-
-/* const mapDispatchToProps = {
-
-}; */
-
-export default connect(mapStateToProps/* , mapDispatchToProps */)(Header);
+export default connect(mapStateToProps)(Header);
