@@ -3,8 +3,8 @@ button {
 }
 
 .answersButtons {
-  display: flex;
   align-items: flex-start;
+  display: flex;
 }
 
 .correctAnswer {
