@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
+
+import { newAnswers } from '../redux/actions/game';
 
 class Questions extends Component {
   constructor(props) {
@@ -17,18 +20,27 @@ class Questions extends Component {
     this.randomAnswers();
   }
 
+  componentDidUpdate() {
+    this.randomAnswers();
+  }
+
   randomAnswers() {
-    const { questions, indexQuestion } = this.props;
+    const { questions, indexQuestion,
+      newAnswers: uptAnswers, updatedAnswers } = this.props;
+
     const questionSelected = questions[indexQuestion];
     const { correct_answer: correctAnswer,
       incorrect_answers: incorrectAswers } = questionSelected;
 
-    const answers = [correctAnswer, ...incorrectAswers];
-    const FACTOR_POSITION = 0.5;
-    const randomAnswers = [...answers].sort(() => FACTOR_POSITION - Math.random());
-    this.setState({
-      randomAnswers,
-    });
+    if (updatedAnswers) {
+      const answers = [correctAnswer, ...incorrectAswers];
+      const FACTOR_POSITION = 0.5;
+      const randomAnswers = [...answers].sort(() => FACTOR_POSITION - Math.random());
+      this.setState({
+        randomAnswers,
+      });
+      uptAnswers(false);
+    }
   }
 
   answersButtons(answer, correctAnswer, index) {
@@ -85,15 +97,18 @@ Questions.propTypes = {
   indexQuestion: PropTypes.number.isRequired,
   disabledButton: PropTypes.bool.isRequired,
   chosenAnswer: PropTypes.bool.isRequired,
+  newAnswers: PropTypes.bool.isRequired,
+  updatedAnswers: PropTypes.bool.isRequired,
   handleClick: PropTypes.func.isRequired,
-  // time: PropTypes.number.isRequired,
 };
 
-const mapStateToProps = ({ game: { questions } }) => ({
+const mapStateToProps = ({ game: { questions, updatedAnswers } }) => ({
   questions,
+  updatedAnswers,
 });
 
-// const mapDispatchToProps = (dispatch) => ({
-// });
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({ newAnswers }, dispatch)
+);
 
-export default connect(mapStateToProps /* mapDispatchToProps */)(Questions);
+export default connect(mapStateToProps, mapDispatchToProps)(Questions);

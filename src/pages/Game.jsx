@@ -8,8 +8,9 @@ import Header from '../components/Header';
 import Questions from '../components/Questions';
 import { saveLocalStorage } from '../functions';
 import { addScore } from '../redux/actions/player';
+import { newAnswers } from '../redux/actions/game';
 
-class Trivia extends Component {
+class Game extends Component {
   constructor(props) {
     super(props);
 
@@ -37,9 +38,11 @@ class Trivia extends Component {
   }
 
   stopTimer() {
-    const { time, stopTime, disabledButton } = this.state;
-    if ((time === 0 || stopTime === true) && !disabledButton) {
+    const { time, stopTime, disabledButton, chosenAnswer } = this.state;
+    if ((time === 0 || stopTime === true)) {
       clearInterval(this.time);
+    }
+    if ((time === 0 || chosenAnswer) && !disabledButton) {
       this.setState({ disabledButton: true });
     }
   }
@@ -52,13 +55,27 @@ class Trivia extends Component {
   }
 
   nextQuestion() {
-    const { indexQuestion } = this.state;
-    this.setState({ indexQuestion: indexQuestion + 1 });
+    const { state: { indexQuestion }, props: { newAnswers: uptAnswers, history } } = this;
+
+    this.setState({
+      indexQuestion: indexQuestion + 1,
+      chosenAnswer: false,
+      disabledButton: false,
+      stopTime: false,
+      time: 30,
+    });
+    const NUM_OF_QUEST = 4;
+    if (indexQuestion === NUM_OF_QUEST) {
+      history.push('/feedback');
+    } else {
+      uptAnswers(true);
+      this.timer();
+    }
   }
 
   buttonNext() {
-    const { chosenAnswer } = this.state;
-    if (chosenAnswer) {
+    const { chosenAnswer, time } = this.state;
+    if (chosenAnswer || time === 0) {
       return (
         <button
           type="button"
@@ -123,6 +140,7 @@ class Trivia extends Component {
     const {
       time, indexQuestion, chosenAnswer, disabledButton,
     } = this.state;
+
     return (
       <div>
         <Header />
@@ -139,12 +157,14 @@ class Trivia extends Component {
   }
 }
 
-Trivia.propTypes = {
+Game.propTypes = {
   questions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  history: PropTypes.objectOf(Object).isRequired,
   score: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
   gravatarEmail: PropTypes.string.isRequired,
   addScore: PropTypes.func.isRequired,
+  newAnswers: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({
@@ -159,6 +179,6 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({ addScore }, dispatch));
+  bindActionCreators({ addScore, newAnswers }, dispatch));
 
-export default connect(mapStateToProps, mapDispatchToProps)(Trivia);
+export default connect(mapStateToProps, mapDispatchToProps)(Game);
