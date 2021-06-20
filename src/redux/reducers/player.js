@@ -4,6 +4,7 @@ import {
   REQUEST_TOKEN_SUCCESS,
   ADD_SCORE,
   ADD_ASSERTION,
+  CLEAR_HISTORY,
 } from '../actions/player';
 
 import { restoreFromLocalStorage, saveLocalStorage } from '../../functions';
@@ -55,6 +56,13 @@ export default (state = INITIAL_STATE, { type, payload }) => {
     return {
       ...state,
       assertions,
+    };
+  }
+  case CLEAR_HISTORY: {
+    return {
+      ...state,
+      assertions: 0,
+      score: 0,
     };
   }
   default:

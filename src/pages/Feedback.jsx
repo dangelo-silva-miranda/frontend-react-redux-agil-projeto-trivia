@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+
 import Header from '../components/Header';
 import { saveLocalStorage } from '../functions';
+import { clearHistoryGame } from '../redux/actions/player';
+import { newAnswers } from '../redux/actions/game';
 
 class Feedback extends Component {
   constructor(props) {
@@ -11,8 +15,7 @@ class Feedback extends Component {
 
     this.msgFeedback = this.msgFeedback.bind(this);
     this.msgAssertions = this.msgAssertions.bind(this);
-    // this.clearHistoryGame = this.clearHistoryGame.bind(this);
-    this.msgAssertions = this.msgAssertions.bind(this);
+    this.clearHistoryGame = this.clearHistoryGame.bind(this);
     this.saveLS = this.saveLS.bind(this);
   }
 
@@ -32,6 +35,22 @@ class Feedback extends Component {
     };
     const key = 'state';
     saveLocalStorage(key, currState);
+  }
+
+  clearHistoryGame() {
+    const { clearHistoryGame: clearHistory, newAnswers: uptAnswers } = this.props;
+    clearHistory();
+    const newScore = {
+      player: {
+        name: '',
+        gravatarEmail: '',
+        assertions: 0,
+        score: 0,
+      },
+    };
+    const key = 'state';
+    saveLocalStorage(key, newScore);
+    uptAnswers(true);
   }
 
   msgFeedback(assertions) {
@@ -62,7 +81,6 @@ class Feedback extends Component {
 
   render() {
     const { score, assertions } = this.props;
-    console.log(assertions);
     return (
       <div>
         <Header />
@@ -80,6 +98,7 @@ class Feedback extends Component {
             <button
               type="button"
               data-testid="btn-play-again"
+              onClick={ this.clearHistoryGame }
             >
               Jogar novamente
             </button>
@@ -98,6 +117,15 @@ class Feedback extends Component {
   }
 }
 
+Feedback.propTypes = {
+  name: PropTypes.string.isRequired,
+  gravatarEmail: PropTypes.string.isRequired,
+  score: PropTypes.number.isRequired,
+  assertions: PropTypes.number.isRequired,
+  clearHistoryGame: PropTypes.func.isRequired,
+  newAnswers: PropTypes.func.isRequired,
+};
+
 const mapStateToProps = ({ player: { name, gravatarEmail, score, assertions } }) => ({
   name,
   gravatarEmail,
@@ -105,11 +133,8 @@ const mapStateToProps = ({ player: { name, gravatarEmail, score, assertions } })
   assertions,
 });
 
-Feedback.propTypes = {
-  name: PropTypes.string.isRequired,
-  gravatarEmail: PropTypes.string.isRequired,
-  score: PropTypes.number.isRequired,
-  assertions: PropTypes.number.isRequired,
-};
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({ clearHistoryGame, newAnswers }, dispatch)
+);
 
-export default connect(mapStateToProps)(Feedback);
+export default connect(mapStateToProps, mapDispatchToProps)(Feedback);
