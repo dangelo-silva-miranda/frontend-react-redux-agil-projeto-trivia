@@ -55,8 +55,11 @@ class Login extends React.Component {
     saveNameEmail(name, email, picture);
     setQuestionsNum(); // mover para config.jsx
     await getQuestions(token, questionsNumber);
-    const key = 'state';
-    saveLocalStorage(key, { player: { name, score: 0, gravatarEmail: email, picture } });
+    const keyy = 'state';
+    saveLocalStorage(keyy, { player: { name, score: 0, gravatarEmail: email, picture } });
+    // const key = 'ranking';
+    // const ranking = [];
+    // saveLocalStorage(key, ranking);
     history.push('/game');
   }
 

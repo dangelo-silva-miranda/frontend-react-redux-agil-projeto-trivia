@@ -111,7 +111,8 @@ Feedback.propTypes = {
   newAnswers: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ player: { name, gravatarEmail, score, assertions } }) => ({
+const mapStateToProps = ({
+  player: { name, gravatarEmail, score, assertions } }) => ({
   name,
   gravatarEmail,
   score,
