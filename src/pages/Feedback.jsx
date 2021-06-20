@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
+import { saveLocalStorage } from '../functions';
 
 class Feedback extends Component {
   constructor(props) {
@@ -10,6 +11,27 @@ class Feedback extends Component {
 
     this.msgFeedback = this.msgFeedback.bind(this);
     this.msgAssertions = this.msgAssertions.bind(this);
+    // this.clearHistoryGame = this.clearHistoryGame.bind(this);
+    this.msgAssertions = this.msgAssertions.bind(this);
+    this.saveLS = this.saveLS.bind(this);
+  }
+
+  componentDidMount() {
+    this.saveLS();
+  }
+
+  saveLS() {
+    const { name, gravatarEmail, assertions, score } = this.props;
+    const currState = {
+      player: {
+        name,
+        gravatarEmail,
+        assertions,
+        score,
+      },
+    };
+    const key = 'state';
+    saveLocalStorage(key, currState);
   }
 
   msgFeedback(assertions) {
@@ -76,12 +98,16 @@ class Feedback extends Component {
   }
 }
 
-const mapStateToProps = ({ player: { score, assertions } }) => ({
+const mapStateToProps = ({ player: { name, gravatarEmail, score, assertions } }) => ({
+  name,
+  gravatarEmail,
   score,
   assertions,
 });
 
 Feedback.propTypes = {
+  name: PropTypes.string.isRequired,
+  gravatarEmail: PropTypes.string.isRequired,
   score: PropTypes.number.isRequired,
   assertions: PropTypes.number.isRequired,
 };
