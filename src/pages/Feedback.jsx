@@ -53,8 +53,10 @@ class Feedback extends Component {
   }
 
   msgFeedback(assertions) {
-    const param = 3;
-    if (assertions < param) {
+    const { questionsNumber } = this.props;
+    const APPROVAL_PERCENTAGE = 0.60;
+    const questionsAverageToApprove = APPROVAL_PERCENTAGE * questionsNumber;
+    if (assertions < questionsAverageToApprove) {
       return (
         <p data-testid="feedback-text">Podia ser melhor...</p>
       );
@@ -70,11 +72,21 @@ class Feedback extends Component {
       <div>
         <Header />
         <div>
-          <p data-testid="feedback-total-score">{ score }</p>
-          <p
-            data-testid="feedback-total-question"
-          >
-            {assertions}
+          <p>
+            Placar final:
+            {' '}
+            <span data-testid="feedback-total-score">{ score }</span>
+          </p>
+          <p>
+            Você acertou:
+            {' '}
+            <span
+              data-testid="feedback-total-question"
+            >
+              {assertions}
+            </span>
+            {' '}
+            {(assertions === 1) ? 'pergunta' : 'perguntas'}
           </p>
           <p>
             {this.msgFeedback(assertions)}
@@ -107,16 +119,18 @@ Feedback.propTypes = {
   gravatarEmail: PropTypes.string.isRequired,
   score: PropTypes.number.isRequired,
   assertions: PropTypes.number.isRequired,
+  questionsNumber: PropTypes.number.isRequired,
   clearHistoryGame: PropTypes.func.isRequired,
   newAnswers: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({
-  player: { name, gravatarEmail, score, assertions } }) => ({
+  player: { name, gravatarEmail, score, assertions }, game: { questionsNumber } }) => ({
   name,
   gravatarEmail,
   score,
   assertions,
+  questionsNumber,
 });
 
 const mapDispatchToProps = (dispatch) => (

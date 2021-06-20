@@ -57,9 +57,6 @@ class Login extends React.Component {
     await getQuestions(token, questionsNumber);
     const keyy = 'state';
     saveLocalStorage(keyy, { player: { name, score: 0, gravatarEmail: email, picture } });
-    // const key = 'ranking';
-    // const ranking = [];
-    // saveLocalStorage(key, ranking);
     history.push('/game');
   }
 
