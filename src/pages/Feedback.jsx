@@ -86,7 +86,7 @@ class Feedback extends Component {
               {assertions}
             </span>
             {' '}
-            {(assertions === 1) ? 'pergunta' : 'perguntas'}
+            {(assertions <= 1) ? 'pergunta' : 'perguntas'}
           </p>
           <p>
             {this.msgFeedback(assertions)}
