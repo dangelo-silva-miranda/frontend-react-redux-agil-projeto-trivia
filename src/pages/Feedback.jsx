@@ -14,7 +14,6 @@ class Feedback extends Component {
     super(props);
 
     this.msgFeedback = this.msgFeedback.bind(this);
-    this.msgAssertions = this.msgAssertions.bind(this);
     this.clearHistoryGame = this.clearHistoryGame.bind(this);
     this.saveLS = this.saveLS.bind(this);
   }
@@ -63,20 +62,6 @@ class Feedback extends Component {
     return (
       <p data-testid="feedback-text">Mandou bem!</p>
     );
-  }
-
-  msgAssertions(assertions) {
-    const one = 1;
-    if (assertions <= one) {
-      switch (assertions) {
-      case 1:
-        return 'Acertou 1 pergunta';
-      default:
-        return 'Não acertou nenhuma pergunta';
-      }
-    } else {
-      return `Acertou ${assertions} perguntas`;
-    }
   }
 
   render() {
