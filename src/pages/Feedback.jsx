@@ -9,12 +9,12 @@ class Feedback extends Component {
     super(props);
 
     this.msgFeedback = this.msgFeedback.bind(this);
+    this.msgAssertions = this.msgAssertions.bind(this);
   }
 
   msgFeedback(assertions) {
     const param = 3;
     if (assertions < param) {
-      console.log(assertions);
       return (
         <p data-testid="feedback-text">Podia ser melhor...</p>
       );
@@ -24,6 +24,20 @@ class Feedback extends Component {
     );
   }
 
+  msgAssertions(assertions) {
+    const one = 1;
+    if (assertions <= one) {
+      switch (assertions) {
+      case 1:
+        return 'Acertou 1 pergunta';
+      default:
+        return 'Não acertou nenhuma pergunta';
+      }
+    } else {
+      return `Acertou ${assertions} perguntas`;
+    }
+  }
+
   render() {
     const { score, assertions } = this.props;
     console.log(assertions);
@@ -31,14 +45,15 @@ class Feedback extends Component {
       <div>
         <Header />
         <div>
-          <p data-testid="feedback-total-score">{`Placar final: ${score}`}</p>
+          <p data-testid="feedback-total-score">{ score }</p>
           <p
             data-testid="feedback-total-question"
           >
-            {`Você acertou:  ${((assertions === 1) ? (
-              `${assertions} pergunta`) : `${assertions} perguntas`)}` }
+            {assertions}
           </p>
-          {this.msgFeedback(assertions)}
+          <p>
+            {this.msgFeedback(assertions)}
+          </p>
           <Link to="/">
             <button
               type="button"
