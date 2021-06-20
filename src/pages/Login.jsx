@@ -121,7 +121,9 @@ const mapDispatchToProps = (dispatch) => ({
   getQuestions: (token, questionsNumber) => dispatch(
     fetchQuestions(token, questionsNumber),
   ),
-  saveNameEmail: (name, email) => dispatch(saveNameEmailPlayer(name, email)),
+  saveNameEmail: (name, email, picture) => dispatch(
+    saveNameEmailPlayer(name, email, picture),
+  ),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

@@ -70,3 +70,18 @@ export const addScore = (updateScore) => ({
     updateScore,
   },
 });
+
+export const ADD_ASSERTION = 'ADD_ASSERTION';
+
+export const addAssertion = (assertions) => ({
+  type: ADD_ASSERTION,
+  payload: {
+    assertions,
+  },
+});
+
+export const CLEAR_HISTORY = 'CLEAR_HISTORY';
+
+export const clearHistoryGame = () => ({
+  type: CLEAR_HISTORY,
+});
