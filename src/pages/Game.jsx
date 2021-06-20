@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import './css/Game.css';
 import Header from '../components/Header';
 import Questions from '../components/Questions';
-import { saveLocalStorage } from '../functions';
+import { restoreFromLocalStorage, saveLocalStorage } from '../functions';
 import { addScore, addAssertion } from '../redux/actions/player';
 import { newAnswers } from '../redux/actions/game';
 
@@ -55,7 +55,10 @@ class Game extends Component {
   }
 
   nextQuestion() {
-    const { state: { indexQuestion }, props: { newAnswers: uptAnswers, history } } = this;
+    const {
+      state: { indexQuestion },
+      props: { newAnswers: uptAnswers, history,
+        questionsNumber, name, picture, score } } = this;
 
     this.setState({
       indexQuestion: indexQuestion + 1,
@@ -64,8 +67,17 @@ class Game extends Component {
       stopTime: false,
       time: 30,
     });
-    const NUM_OF_QUEST = 4;
-    if (indexQuestion === NUM_OF_QUEST) {
+
+    if (indexQuestion === (questionsNumber - 1)) {
+      const key = 'ranking';
+      const ranking = (restoreFromLocalStorage(key) !== '')
+        ? restoreFromLocalStorage(key) : [];
+      ranking.push({
+        name,
+        score,
+        picture,
+      });
+      saveLocalStorage(key, ranking);
       history.push('/feedback');
     } else {
       uptAnswers(true);
@@ -74,7 +86,10 @@ class Game extends Component {
   }
 
   buttonNext() {
-    const { chosenAnswer, time } = this.state;
+    const {
+      state: { chosenAnswer, time, indexQuestion },
+      props: { questionsNumber } } = this;
+
     if (chosenAnswer || time === 0) {
       return (
         <button
@@ -82,7 +97,7 @@ class Game extends Component {
           data-testid="btn-next"
           onClick={ this.nextQuestion }
         >
-          Próxima Pergunta
+          {(indexQuestion === (questionsNumber - 1)) ? 'Feedback' : 'Próxima Pergunta'}
         </button>
       );
     }
@@ -166,16 +181,18 @@ Game.propTypes = {
   history: PropTypes.objectOf(Object).isRequired,
   assertions: PropTypes.number.isRequired,
   score: PropTypes.number.isRequired,
+  questionsNumber: PropTypes.number.isRequired,
   addAssertion: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
+  picture: PropTypes.string.isRequired,
   gravatarEmail: PropTypes.string.isRequired,
   addScore: PropTypes.func.isRequired,
   newAnswers: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({
-  game: { questions },
-  player: { name, gravatarEmail, assertions, score },
+  game: { questions, questionsNumber },
+  player: { name, gravatarEmail, assertions, score, picture },
 }) => ({
 
   questions,
@@ -183,6 +200,8 @@ const mapStateToProps = ({
   gravatarEmail,
   assertions,
   score,
+  picture,
+  questionsNumber,
 });
 
 const mapDispatchToProps = (dispatch) => (

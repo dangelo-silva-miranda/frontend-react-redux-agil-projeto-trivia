@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import { fetchToken, saveNameEmailPlayer } from '../redux/actions/player';
-import { fetchQuestions } from '../redux/actions/game';
+import { fetchQuestions, setQuestionsNumber } from '../redux/actions/game';
 import { saveLocalStorage, toHash } from '../functions';
 import { GRAVATAR_API } from '../services/api';
 
@@ -44,17 +44,19 @@ class Login extends React.Component {
 
   async handleClick(name, email) {
     const {
-      getToken, saveNameEmail, token, getQuestions, history,
+      getToken, saveNameEmail,
+      token, getQuestions, history,
+      questionsNumber, setQuestionsNum,
     } = this.props;
 
     await getToken();
     const hash = toHash(email);
     const picture = `${GRAVATAR_API}${hash}`;
     saveNameEmail(name, email, picture);
-    const questionsNumber = 5;
+    setQuestionsNum(); // mover para config.jsx
     await getQuestions(token, questionsNumber);
-    const key = 'state';
-    saveLocalStorage(key, { player: { name, score: 0, gravatarEmail: email, picture } });
+    const keyy = 'state';
+    saveLocalStorage(keyy, { player: { name, score: 0, gravatarEmail: email, picture } });
     history.push('/game');
   }
 
@@ -106,14 +108,17 @@ class Login extends React.Component {
 
 Login.propTypes = {
   token: PropTypes.string.isRequired,
+  questionsNumber: PropTypes.number.isRequired,
   history: PropTypes.objectOf(Object).isRequired,
   getToken: PropTypes.func.isRequired,
   getQuestions: PropTypes.func.isRequired,
   saveNameEmail: PropTypes.func.isRequired,
+  setQuestionsNum: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ player: { token } }) => ({
+const mapStateToProps = ({ player: { token }, game: { questionsNumber } }) => ({
   token,
+  questionsNumber,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -123,6 +128,9 @@ const mapDispatchToProps = (dispatch) => ({
   ),
   saveNameEmail: (name, email, picture) => dispatch(
     saveNameEmailPlayer(name, email, picture),
+  ),
+  setQuestionsNum: (questionsNumber) => dispatch(
+    setQuestionsNumber(questionsNumber),
   ),
 });
 

@@ -25,3 +25,13 @@ export const newAnswers = (updatedAnswers) => ({
     updatedAnswers,
   },
 });
+
+// -----------------------------------------------------------------------------------------------
+export const SET_QUESTIONS_NUMBER = 'SET_QUESTIONS_NUMBER';
+export const QUESTIONS_NUMBER_DEFAULT = 5;
+export const setQuestionsNumber = (questionsNumber = QUESTIONS_NUMBER_DEFAULT) => ({
+  type: SET_QUESTIONS_NUMBER,
+  payload: {
+    questionsNumber,
+  },
+});
