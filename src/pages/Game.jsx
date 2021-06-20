@@ -74,7 +74,10 @@ class Game extends Component {
   }
 
   buttonNext() {
-    const { chosenAnswer, time } = this.state;
+    const {
+      state: { chosenAnswer, time, indexQuestion },
+      props: { questionsNumber } } = this;
+    console.log(questionsNumber);
     if (chosenAnswer || time === 0) {
       return (
         <button
@@ -82,7 +85,7 @@ class Game extends Component {
           data-testid="btn-next"
           onClick={ this.nextQuestion }
         >
-          Próxima Pergunta
+          {(indexQuestion === (questionsNumber - 1)) ? 'Feedback' : 'Próxima Pergunta'}
         </button>
       );
     }
@@ -166,6 +169,7 @@ Game.propTypes = {
   history: PropTypes.objectOf(Object).isRequired,
   assertions: PropTypes.number.isRequired,
   score: PropTypes.number.isRequired,
+  questionsNumber: PropTypes.number.isRequired,
   addAssertion: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
   gravatarEmail: PropTypes.string.isRequired,
@@ -174,7 +178,7 @@ Game.propTypes = {
 };
 
 const mapStateToProps = ({
-  game: { questions },
+  game: { questions, questionsNumber },
   player: { name, gravatarEmail, assertions, score },
 }) => ({
 
@@ -183,6 +187,7 @@ const mapStateToProps = ({
   gravatarEmail,
   assertions,
   score,
+  questionsNumber,
 });
 
 const mapDispatchToProps = (dispatch) => (
