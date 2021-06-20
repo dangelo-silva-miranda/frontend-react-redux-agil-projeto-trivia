@@ -1,20 +1,20 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
 
-class Feedback extends React.Component {
+class Feedback extends Component {
   constructor(props) {
     super(props);
 
-    // this.state = { };
     this.msgFeedback = this.msgFeedback.bind(this);
   }
 
   msgFeedback(assertions) {
     const param = 3;
     if (assertions < param) {
+      console.log(assertions);
       return (
         <p data-testid="feedback-text">Podia ser melhor...</p>
       );
@@ -26,6 +26,7 @@ class Feedback extends React.Component {
 
   render() {
     const { score, assertions } = this.props;
+    console.log(assertions);
     return (
       <div>
         <Header />
@@ -34,7 +35,8 @@ class Feedback extends React.Component {
           <p
             data-testid="feedback-total-question"
           >
-            {`Você acertou: ${assertions} perguntas`}
+            {`Você acertou:  ${((assertions === 1) ? (
+              `${assertions} pergunta`) : `${assertions} perguntas`)}` }
           </p>
           {this.msgFeedback(assertions)}
           <Link to="/">
