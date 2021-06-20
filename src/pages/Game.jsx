@@ -7,7 +7,7 @@ import './css/Game.css';
 import Header from '../components/Header';
 import Questions from '../components/Questions';
 import { saveLocalStorage } from '../functions';
-import { addScore } from '../redux/actions/player';
+import { addScore, addAssertion } from '../redux/actions/player';
 import { newAnswers } from '../redux/actions/game';
 
 class Game extends Component {
@@ -89,7 +89,9 @@ class Game extends Component {
   }
 
   calcPointsScore({ target: { innerText } }) {
-    const { state: { time, indexQuestion }, props: { questions } } = this;
+    const {
+      state: { time, indexQuestion },
+      props: { questions, assertions, addAssertion: addToAssertion } } = this;
     const questionSelected = questions[indexQuestion];
     const { correct_answer: correctAnswer, difficulty } = questionSelected;
     const answer = innerText;
@@ -97,6 +99,8 @@ class Game extends Component {
     const INITIAL_VALUE = 10;
 
     if (answer === correctAnswer) {
+      const updateAssertions = assertions + 1;
+      addToAssertion(updateAssertions);
       const { easy, medium, hard } = level;
       switch (difficulty) {
       case 'easy':
@@ -160,7 +164,9 @@ class Game extends Component {
 Game.propTypes = {
   questions: PropTypes.arrayOf(PropTypes.object).isRequired,
   history: PropTypes.objectOf(Object).isRequired,
+  assertions: PropTypes.number.isRequired,
   score: PropTypes.number.isRequired,
+  addAssertion: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
   gravatarEmail: PropTypes.string.isRequired,
   addScore: PropTypes.func.isRequired,
@@ -169,16 +175,17 @@ Game.propTypes = {
 
 const mapStateToProps = ({
   game: { questions },
-  player: { name, gravatarEmail, score },
+  player: { name, gravatarEmail, assertions, score },
 }) => ({
 
   questions,
   name,
   gravatarEmail,
+  assertions,
   score,
 });
 
 const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({ addScore, newAnswers }, dispatch));
+  bindActionCreators({ addScore, newAnswers, addAssertion }, dispatch));
 
 export default connect(mapStateToProps, mapDispatchToProps)(Game);

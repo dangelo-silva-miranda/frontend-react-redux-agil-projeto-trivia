@@ -2,8 +2,8 @@ import {
   SAVE_NAME_EMAIL_PLAYER,
   REQUEST_TOKEN,
   REQUEST_TOKEN_SUCCESS,
-  REQUEST_TOKEN_ERROR,
   ADD_SCORE,
+  ADD_ASSERTION,
 } from '../actions/player';
 
 import { restoreFromLocalStorage, saveLocalStorage } from '../../functions';
@@ -12,6 +12,7 @@ const { player } = restoreFromLocalStorage('state');
 
 const INITIAL_STATE = {
   name: (player) ? player.name : '',
+  assertions: 0,
   score: 0,
   gravatarEmail: (player) ? player.gravatarEmail : '',
   picture: (player) ? player.picture : '',
@@ -44,17 +45,16 @@ export default (state = INITIAL_STATE, { type, payload }) => {
       isFetching,
     };
   }
-  case REQUEST_TOKEN_ERROR: { const { isFetching, error } = payload;
-    return {
-      ...state,
-      error,
-      isFetching,
-    };
-  }
   case ADD_SCORE: { const { updateScore } = payload;
     return {
       ...state,
       score: updateScore,
+    };
+  }
+  case ADD_ASSERTION: { const { assertions } = payload;
+    return {
+      ...state,
+      assertions,
     };
   }
   default:
